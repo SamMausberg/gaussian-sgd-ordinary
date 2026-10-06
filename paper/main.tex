@@ -336,9 +336,9 @@ Three parts of the paper are not formalized. The first is the dimension bound in
 By Corollary~\ref{cor:edge}, the premise of Theorem~\ref{thm:margin} admits nonconstant classes only for $n\le(18B/\theta)^2$. The main theorems hold at bounded effective time. The bound $B\le12$ enters through the density and anti-concentration lemmas and also fixes the constants of the score comparison; we do not know whether success at larger effective time, for instance with $B$ growing with $n$, forces any representation bound. The thresholds on $m$ and $T$ are sufficient conditions chosen to keep the proofs short and do not locate a transition, and the constants are large: at $\eps=1/4$ and $B=12$ the dimension bound is of order $10^{13}(n+1)$. The score comparison allows many gate crossings, but the conclusion is a kernel-regime statement and gives no separation between feature learning and kernel methods. The representation in Theorem~\ref{thm:margin} is existential, since its last step is a random projection, and we give no efficient construction of the feature map.
 
 \section*{AI Disclosure}
-Claude (Anthropic) was used to write the Lean~4 formalization described in Section~\ref{sec:lean}, to review the proofs, a review that led to Corollary~\ref{cor:edge}, to check the bibliography against publisher and arXiv records, and to revise the exposition. The author is responsible for the results and their presentation.
+GPT-6 Astra and Claude models were used to assist with this research. Samuel Mausberg is responsible for all of its content.
 
-\begin{thebibliography}{99}
+\begin{thebibliography}{99}\interlinepenalty=10000
 \bibitem[Abbe et~al.(2021)Abbe, Kamath, Malach, Sandon, and Srebro]{Abbe21}
 Emmanuel Abbe, Pritish Kamath, Eran Malach, Colin Sandon, and Nathan Srebro.
 \newblock On the power of differentiable learning versus {PAC} and {SQ} learning.
@@ -404,15 +404,15 @@ Eran Malach, Gilad Yehudai, Shai Shalev-Shwartz, and Ohad Shamir.
 \newblock The connection between approximation, depth separation and learnability in neural networks.
 \newblock In \emph{Proceedings of the 34th Conference on Learning Theory}, volume~134 of \emph{Proceedings of Machine Learning Research}, pages 3265--3295, 2021.
 
-\bibitem[Mausberg(2026)]{MausbergSQ26}
-Samuel Mausberg.
-\newblock Distribution-independent {SQ} learning does not imply low dimension complexity.
-\newblock Preprint, version 4, October 2026.
-
 \bibitem[{The mathlib Community}(2020)]{Mathlib}
 {The mathlib Community}.
 \newblock The {L}ean mathematical library.
 \newblock In \emph{Proceedings of the 9th ACM SIGPLAN International Conference on Certified Programs and Proofs}, pages 367--381, 2020.
+
+\bibitem[Mausberg(2026)]{MausbergSQ26}
+Samuel Mausberg.
+\newblock Distribution-independent {SQ} learning does not imply low dimension complexity.
+\newblock Preprint, version 4, October 2026.
 
 \bibitem[Patel(2026)]{Patel26}
 Shyamal Patel.
