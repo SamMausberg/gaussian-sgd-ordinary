@@ -56,6 +56,8 @@ no stronger. The same file defines the comparison objects of the proofs (`psi`, 
   bound, and the Sauer–Shelah count.
 - The crossing proposition (`prop:crossings`).
 - The bound on `Pr_x[F(x) h(x) < 0]` stated after `thm:risk`.
+- The passage from the `sgn 0 = 1` convention of `gate_pdc` to the convention of Kamath, Montasser,
+  and Srebro, which counts a zero score as an error and costs one constant coordinate (`sec:gate`).
 
 ## Proof routes that differ from the text
 
