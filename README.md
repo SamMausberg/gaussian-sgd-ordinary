@@ -7,7 +7,8 @@ Open Question 1, trained on `{-1,1}^n` by exact single-example logistic SGD with
 initialization and the tail-sum predictor. At bounded effective time `B = ηmT ≤ 12` it shows that
 the risk on a target `h` under a marginal `D` is at least `1/2 - Δ - 9B A_D(h)`, where `A_D(h)` is
 the label correlation of the Gaussian ReLU features. Success under every marginal then gives every
-target a margin in that kernel, bounded VC dimension, and dimension complexity `O(n)`.
+target a margin in that kernel, bounded VC dimension, and dimension complexity `O((B/θ)^4 n)`,
+where `θ = 1/2 - ε`.
 
 ## Layout
 
