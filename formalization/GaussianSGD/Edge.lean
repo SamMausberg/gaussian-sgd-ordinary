@@ -4,8 +4,8 @@ import GaussianSGD.Main
 # Adjacent points (`cor:edge`)
 
 A target that is not constant differs at two adjacent cube points. Under the uniform
-distribution on those two points its kernel correlation is at most `1/√n`, so the risk bound of
-`thm:risk` leaves almost no room to learn it. Under the hypotheses of `thm:margin` the learned
+distribution on those two points its kernel correlation is at most `1/√n`, so `thm:risk` bounds
+its risk below by `1/2 - Δ - 9B/√n`. Under the hypotheses of `thm:margin` the learned
 class is therefore constant once `n > (18B/θ)²`.
 -/
 

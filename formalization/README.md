@@ -23,10 +23,10 @@ at a zero preactivation, the normalized tail score and its sign with `sgn 0 = 1`
 `N(0, I_n/n)` of the hidden rows and `N(0, I_m/m)` of the output layer, and the risk. A marginal is a
 probability vector on the cube, so expectations over samples are finite sums. The risk is the
 Lebesgue integral (`lintegral`) over the initialization of the error averaged over histories drawn
-from `D^T`; for an integrand not known to be measurable this is the lower integral, which makes
-the lower bounds and the premises at least as strong as for a measurable integrand. The same file defines the comparison objects of the proofs (`psi`, `Good`, `frozen`,
-`mu`, `Rmap`, `Pmap`, `Zsym`) and the kernel correlation `kernelCorr`. `Basic.lean` collects small
-lemmas used in several files.
+from `D^T`. For an integrand not known to be measurable this is the lower integral, so a lower
+bound on it is at least as strong as for a measurable integrand, and a premise stated with it is
+no stronger. The same file defines the comparison objects of the proofs (`psi`, `Good`, `frozen`,
+`mu`, `Rmap`, `Pmap`, `Zsym`) and the kernel correlation `kernelCorr`.
 
 ## Map from the paper
 
@@ -39,13 +39,15 @@ lemmas used in several files.
 | Anti-concentration of the symmetric tail (`lem:smallball`) | `smallball`, `null_risk` | `SmallBall.lean` |
 | Kernel identity (`eq:kernelidentity`) | `kernel_identity`, `kernelCorr_eq_norm`, `Phi_norm_sq` | `Kernel.lean` |
 | Risk controlled by kernel correlation (`thm:risk`) | `risk_lower_bound` | `Risk.lean` |
-| Numerical instance (`eq:risk-simple`) | `lossTerm_regime`, `risk_lower_bound_regime` | `Main.lean` |
+| A numerical instance (`cor:instance`) | `lossTerm_regime`, `risk_lower_bound_regime` | `Main.lean` |
 | Convex separation and ordinary dimension (`lem:geometry`) | `margin_and_vc`, `growth_bound` | `Geometry.lean` |
 | Kernel margin from success under every marginal (`thm:margin`) | `kernel_margin`, `lossTerm_le_half`, `regime_of_large`, `kernel_margin_regime` | `Main.lean` |
 | Adjacent points (`cor:edge`) | `edge_lower_bound`, `class_constant` | `Edge.lean` |
 | Parity obstruction (`cor:parity`) | `parity_lower_bound`, `kernelCorr_parity_sq_le` | `Main.lean`, `Kernel.lean` |
 | Row movement (`lem:rows`) | `row_movement` | `GateRegime.lean` |
 | Fixed gates at small total step (`thm:gate`) | `gates_fixed`, `exact_representation`, `gateSet_mass`, `gateBound_le`, `measurable_gate_inf`, `gate_pdc`, `gate_small_step` | `GateRegime.lean`, `GateMass.lean` |
+
+`Basic.lean` collects small lemmas used in several files.
 
 ## Not formalized
 
