@@ -553,22 +553,19 @@ Assume $\norm{\psi(x)}^2\le\Lambda$ for all $x$, $B\le12$, and $\gamma\le1/2$, a
 Equivalently, $z_s$ has a density bounded by $e\,(2\pi)^{-m/2}\exp(-\norm v^2/2)$.
 \end{lemma}
 \begin{proof}
-Besides the operator bound in \eqref{eq:H}, $\operatorname{tr}H(v)\le\Lambda/4$. Let $a=\gamma\Lambda/4\le9/128$. Every eigenvalue of $DR(v)$ lies in $[1-a,1]$. The map $R$ is the identity minus a map with Lipschitz constant $a<1$, so $\norm{R(v)-R(v')}\ge(1-a)\norm{v-v'}$ and $R^s$ is injective.
-
-For $0\le t\le a$, $-\log(1-t)\le t/(1-a)$. Thus
+For every $v$, the matrix $H(v)$ is positive semidefinite with $\operatorname{tr}H(v)\le\Lambda/4$, since $\operatorname{sech}^2\le1$ and $\E_D\norm{\psi(x)}^2\le\Lambda$. Let $a=\gamma\Lambda/4\le9/128$. The eigenvalues $\kappa_1,\ldots,\kappa_m$ of $\gamma H(v)$ are nonnegative with $\sum_i\kappa_i\le a$, so
 \[
- -\log\det DR(v)\le\frac{\gamma\operatorname{tr}H(v)}{1-a}
- \le\frac{\gamma\Lambda}{4(1-a)},
+ \det DR(v)=\prod_{i=1}^m(1-\kappa_i)\ge1-\sum_{i=1}^m\kappa_i\ge1-a.
 \]
-and by the chain rule $\det D(R^s)(b)\ge\exp(-s\gamma\Lambda/(4(1-a)))$ for every $b$. Here $s\gamma\le B/2+\gamma/2\le25/4$, so with $\gamma\le1/2$ and $\Lambda=9/16$ the exponent is at most $225/238<1$. The trace bound keeps this factor independent of the width.
+The trace bound keeps this factor independent of the width. Since $\tanh$ is increasing and $1$-Lipschitz, $\ip{R(v)-R(v')}{v-v'}\ge(1-a)\norm{v-v'}^2$, so $R$ is injective. Also $R$ is nonexpansive and fixes zero, so $\norm{R(b)}\le\norm b$ and $\varphi(R(b))\ge\varphi(b)$ for the standard Gaussian density $\varphi$.
 
-Let $\varphi$ be the standard Gaussian density, fix a Borel set $E$, and put $S=(R^s)^{-1}(E)$. Since $R$ is nonexpansive and fixes zero, $\norm{R^s(b)}\le\norm b$, so $\varphi(R^s(b))\ge\varphi(b)$. The change of variables formula for the injective map $R^s$ gives
+Fix a Borel set $E$ and put $S=R^{-1}(E)$, so that $R(S)\subseteq E$. The change of variables formula for the injective map $R$ gives
 \[
- \Pr(b_0\in E)\ge\int_{R^s(S)}\varphi
- =\int_S\det D(R^s)(b)\,\varphi(R^s(b))\,db
- \ge e^{-1}\int_S\varphi=e^{-1}\Pr(z_s\in E).
+ \Pr(b_0\in E)\ge\int_{R(S)}\varphi
+ =\int_S\det DR(b)\,\varphi(R(b))\,db
+ \ge(1-a)\Pr(b_0\in S).
 \]
-This proves \eqref{eq:density}.
+Thus the law of $R(b_0)$ is at most $(1-a)^{-1}$ times the standard Gaussian law. Pushing forward by $R$ preserves such a domination, so by induction the law of $z_s=R^s(b_0)$ is at most $(1-a)^{-s}$ times the standard Gaussian law. Finally $(1-a)^{-s}\le\exp(sa/(1-a))\le e$, because $sa\le1-a$: indeed $\gamma(s+1)\le(B+\gamma)/2+\gamma\le27/4$, so $a(s+1)=9\gamma(s+1)/64\le243/256$. This proves \eqref{eq:density}.
 \end{proof}
 
 \begin{lemma}[Anti-concentration of the symmetric tail]
