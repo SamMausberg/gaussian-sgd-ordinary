@@ -41,7 +41,7 @@ from `D^T`. The same file defines the comparison objects of the proofs (`psi`, `
 | Kernel margin from success under every marginal (`thm:margin`) | `kernel_margin`, `lossTerm_le_half`, `regime_of_large`, `kernel_margin_regime` | `Main.lean` |
 | Parity obstruction (`cor:parity`) | `parity_lower_bound`, `kernelCorr_parity_sq_le` | `Main.lean`, `Kernel.lean` |
 | Row movement (`lem:rows`) | `row_movement` | `GateRegime.lean` |
-| Fixed gates at small total step (`thm:gate`) | `exact_representation`, `gateSet_mass`, `gateBound_le`, `gate_pdc`, `gate_small_step` | `GateRegime.lean`, `GateMass.lean` |
+| Fixed gates at small total step (`thm:gate`) | `gates_fixed`, `exact_representation`, `gateSet_mass`, `gateBound_le`, `gate_pdc`, `gate_small_step` | `GateRegime.lean`, `GateMass.lean` |
 
 ## Not formalized
 

@@ -47,6 +47,7 @@ import GaussianSGD
 #print axioms GaussianSGD.parity_lower_bound
 -- Fixed gates at small total step (`thm:gate`, `lem:rows`)
 #print axioms GaussianSGD.row_movement
+#print axioms GaussianSGD.gates_fixed
 #print axioms GaussianSGD.exact_representation
 #print axioms GaussianSGD.gateSet_mass
 #print axioms GaussianSGD.gateBound_le
