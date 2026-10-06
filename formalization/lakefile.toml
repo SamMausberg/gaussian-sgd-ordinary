@@ -1,7 +1,7 @@
 name = "gaussiansgd"
 version = "0.1.0"
 defaultTargets = ["GaussianSGD"]
-# moreLeanArgs = ["-DwarningAsError=true"]  # re-enabled for the release build
+moreLeanArgs = ["-DwarningAsError=true"]
 
 [[require]]
 name = "mathlib"

@@ -1,0 +1,215 @@
+{
+  "status": "passed",
+  "forbidden_tokens": [],
+  "build_returncode": 0,
+  "build_tail": [
+    "\u2714 [8924/8926] Built GaussianSGD.Main (9.5s)",
+    "\u2714 [8925/8926] Built GaussianSGD (4.4s)",
+    "Build completed successfully (8926 jobs)."
+  ],
+  "audited_theorems": 40,
+  "listed_theorems": 40,
+  "axioms": {
+    "GaussianSGD.init_hidden": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "GaussianSGD.init_output": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "GaussianSGD.score_comparison": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "GaussianSGD.tail_score_comparison": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "GaussianSGD.g_bsign": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "GaussianSGD.Pmap_eq_mean": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "GaussianSGD.Rmap_neg": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "GaussianSGD.Rmap_nonexpansive": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "GaussianSGD.Pmap_nonexpansive": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "GaussianSGD.sample_nonexpansive": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "GaussianSGD.frozen_sq_error": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "GaussianSGD.label_effect": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "GaussianSGD.tail_sq_error": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "GaussianSGD.tail_label_effect": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "GaussianSGD.density_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "GaussianSGD.smallball": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "GaussianSGD.null_risk": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "GaussianSGD.Phi_norm_sq": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "GaussianSGD.kernelCorr_eq_norm": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "GaussianSGD.kernel_identity": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "GaussianSGD.integrable_norm_mu": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "GaussianSGD.kernelCorr_parity_sq_le": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "GaussianSGD.margin_and_vc": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "GaussianSGD.growth_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "GaussianSGD.cond_risk_lower": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "GaussianSGD.risk_lower_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "GaussianSGD.lossTerm_regime": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "GaussianSGD.risk_lower_bound_regime": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "GaussianSGD.kernel_margin": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "GaussianSGD.lossTerm_le_half": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "GaussianSGD.regime_of_large": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "GaussianSGD.kernel_margin_regime": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "GaussianSGD.parity_lower_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "GaussianSGD.row_movement": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "GaussianSGD.gates_fixed": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "GaussianSGD.exact_representation": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "GaussianSGD.gateSet_mass": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "GaussianSGD.gateBound_le": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "GaussianSGD.gate_pdc": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "GaussianSGD.gate_small_step": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ]
+  },
+  "non_standard": {}
+}
