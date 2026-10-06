@@ -17,7 +17,7 @@ listed theorem depends only on `propext`, `Classical.choice`, and `Quot.sound`. 
 
 ## Definitions
 
-`GaussianSGD/Defs.lean` defines the process of Section 2 of the paper: the cube `{-1,1}^n` (as
+`GaussianSGD/Defs.lean` defines the process of the paper (`eq:init`–`eq:tail`): the cube `{-1,1}^n` (as
 `Fin n → Bool`), the bias-free network, the simultaneous single-example update with derivative zero
 at a zero preactivation, the normalized tail score and its sign with `sgn 0 = 1`, the laws
 `N(0, I_n/n)` of the hidden rows and `N(0, I_m/m)` of the output layer, and the risk. A marginal is a
@@ -36,7 +36,8 @@ from `D^T`. The same file defines the comparison objects of the proofs (`psi`, `
 | Density at the beginning of the tail (`lem:density`) | `density_bound` | `Density.lean` |
 | Anti-concentration of the symmetric tail (`lem:smallball`) | `smallball`, `null_risk` | `SmallBall.lean` |
 | Kernel identity (`eq:kernelidentity`) | `kernel_identity`, `kernelCorr_eq_norm`, `Phi_norm_sq` | `Kernel.lean` |
-| Risk controlled by kernel correlation (`thm:risk`) | `risk_lower_bound`, `lossTerm_regime`, `risk_lower_bound_regime` | `Risk.lean`, `Main.lean` |
+| Risk controlled by kernel correlation (`thm:risk`) | `risk_lower_bound` | `Risk.lean` |
+| Numerical instance (`eq:risk-simple`) | `lossTerm_regime`, `risk_lower_bound_regime` | `Main.lean` |
 | Convex separation and ordinary dimension (`lem:geometry`) | `margin_and_vc`, `growth_bound` | `Geometry.lean` |
 | Kernel margin from success under every marginal (`thm:margin`) | `kernel_margin`, `lossTerm_le_half`, `regime_of_large`, `kernel_margin_regime` | `Main.lean` |
 | Parity obstruction (`cor:parity`) | `parity_lower_bound`, `kernelCorr_parity_sq_le` | `Main.lean`, `Kernel.lean` |
@@ -53,9 +54,13 @@ from `D^T`. The same file defines the comparison objects of the proofs (`psi`, `
 ## Proof routes that differ from the text
 
 - Nonexpansivity of the logistic maps and the Jacobian estimates in `lem:smallball` are proved with
-  secant slopes, without derivatives.
-- `init_hidden` uses the exact moment generating function of `ReLU(Z)^2` and checks the two
-  Chernoff exponents at `θ = ±1/512` directly.
+  secant slopes of `tanh` and of the logistic function, obtained from the one-variable mean value
+  theorem, without Jacobians of the vector-valued maps.
+- `score_comparison` bounds the movement of both layers by induction on `t`, in place of the
+  bootstrap over the maxima used in the paper; `row_movement` uses the addition formulas for
+  `cosh` and `sinh` in place of the expansion of the matrix power.
+- `init_hidden` evaluates the two Chernoff exponents at `±1/512` directly, using the exact moment
+  generating function of `ReLU(Z)^2`, instead of bounding the second derivative of its logarithm.
 - The VC bound in `margin_and_vc` chooses signs one at a time with the parallelogram law.
 - Mathlib has no density for the standard Gaussian measure on `ℝ^m`; `DensityGaussian.lean`
   identifies it through characteristic functions before the change of variables in `density_bound`.

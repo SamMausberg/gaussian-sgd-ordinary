@@ -17,7 +17,7 @@ target a margin in that kernel, bounded VC dimension, and dimension complexity `
   from paper statements to Lean theorems and for what is not formalized.
 - `checks/verify.py`: exact rational checks of the constants and floating-point checks of proof
   formulas on small instances; `checks/verification_results.json` holds its output.
-- `history/`: the manuscript and the fixed-gate note as first received.
+- `history/`: earlier drafts of the manuscript and of the fixed-gate note.
 
 ## Building
 
