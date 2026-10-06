@@ -26,7 +26,7 @@
 \begin{document}
 \maketitle
 \begin{abstract}
-Feldman, Kamath, and Srebro ask whether a class that Gaussian-initialized logistic SGD on a ReLU network learns under every input distribution must have dimension complexity at most proportional to the number of parameters times the number of steps. We study their two-layer bias-free process on $\{-1,1\}^n$, in which both layers are trained by exact single-example updates and the prediction is the sign of the tail sum of scores. Write $B=\eta mT$ for the effective time. For $B\le12$ and width and step count large relative to $n$ and $B$, we show that the expected error on a target $h$ under a marginal $D$ is at least $1/2-\Delta-9B\,A_D(h)$, where $A_D(h)$ is the label correlation of the Gaussian ReLU features under $D$ and $\Delta$ is an explicit error term. Once width and step count are also large relative to $1/(1/2-\eps)$, learning to error $\eps<1/2$ under every marginal therefore forces correlation at least $(1/2-\eps)/(18B)$ under every marginal. Convex separation turns this into a margin for every target in one fixed kernel. The margin bounds the VC dimension by $O(B^2)$, so only classes of bounded VC dimension are learnable in this regime, and it gives an exact deterministic representation of dimension $O(n)$. Gates may change during training: at width linear in $n$, a point-mass marginal produces an unbounded number of first-step gate crossings. We also prove a parity lower bound and, in a separate small-step regime, an exact fixed-gate representation with a probabilistic-dimension bound. The proofs of the risk bound, the margin theorem, and the fixed-gate theorem are formalized in Lean 4, apart from the final random-projection step.
+Feldman, Kamath, and Srebro ask whether a class that Gaussian-initialized logistic SGD on a ReLU network learns under every input distribution must have dimension complexity at most proportional to the number of parameters times the number of steps. We study their two-layer bias-free process on $\{-1,1\}^n$, in which both layers are trained by exact single-example updates and the prediction is the sign of the tail sum of scores. Write $B=\eta mT$ for the effective time. For $B\le12$ and width and step count large relative to $n$ and $B$, we show that the expected error on a target $h$ under a marginal $D$ is at least $1/2-\Delta-9B\,A_D(h)$, where $A_D(h)$ is the label correlation of the Gaussian ReLU features under $D$ and $\Delta$ is an explicit error term. Once width and step count are also large relative to $1/(1/2-\eps)$, learning to error $\eps<1/2$ under every marginal therefore forces correlation at least $(1/2-\eps)/(18B)$ under every marginal. Convex separation turns this into a margin for every target in one fixed kernel, which bounds the VC dimension by $O(B^2)$ and gives an exact deterministic representation of dimension $O(n)$. The margin is very restrictive. Adjacent cube points are within $O(1/\sqrt n)$ of each other in this kernel, so once $n>(18B/(1/2-\eps))^2$ only constant targets can be learned under every marginal; the dimension bound has content only below that threshold. Gates may change during training: at width linear in $n$, a point-mass marginal produces an unbounded number of first-step gate crossings. We also prove a parity lower bound and, in a separate small-step regime, an exact fixed-gate representation with a probabilistic-dimension bound. The proofs of the risk bound, the margin theorem, and the fixed-gate theorem are formalized in Lean 4, apart from the final random-projection step.
 \end{abstract}
 \begin{keywords}
 Stochastic gradient descent; dimension complexity; kernel margin; Gaussian initialization; ReLU networks.
@@ -42,9 +42,11 @@ Our main result says that, at bounded effective time, the process can beat rando
 \end{equation}
 for every Boolean target $h$ and every marginal $D$, where $\Risk(h,D)$ is the expected error of the process and $\Delta$ is explicit and tends to zero as $m/n$ and $T$ grow at fixed $B$. The bound makes no assumption on the margins of the learned scores.
 
-Under every marginal the bound becomes a representation theorem. Let $\theta=1/2-\eps$. If the process learns $\Hc$ to error $\eps$ under every marginal and $\Delta\le\theta/2$, which holds once $m\ge2^{17}n/\theta$ and $T\ge(216B/\theta)^2$, then $A_D(h)\ge\theta/(18B)$ for all $h\in\Hc$ and all $D$. The vectors $\E_Dh(x)\Phi(x)$ fill the convex hull of $\{h(x)\Phi(x):x\in\X_n\}$, so the point of that hull nearest the origin gives a unit vector $u_h$ with $h(x)\ip{u_h}{\Phi(x)}\ge\theta/(18B)$ at every cube point (Theorem~\ref{thm:margin}). Counting with this margin and applying a random Gaussian projection, as in the classical conversion from margin to dimension \citep{BES02,KMS20}, then give $\dc(\Hc)\le4\cdot10^6(B/\theta)^4(n+1)$. Since $S=m(n+1)$, this answers Open Question~1 affirmatively for two-layer networks in this regime, with a deterministic feature map that represents every target exactly.
+Under every marginal the bound becomes a representation theorem. Let $\theta=1/2-\eps$. If the process learns $\Hc$ to error $\eps$ under every marginal and $\Delta\le\theta/2$, which holds once $m\ge2^{17}n/\theta$ and $T\ge(216B/\theta)^2$, then $A_D(h)\ge\theta/(18B)$ for all $h\in\Hc$ and all $D$. The vectors $\E_Dh(x)\Phi(x)$ fill the convex hull of $\{h(x)\Phi(x):x\in\X_n\}$, so the point of that hull nearest the origin gives a unit vector $u_h$ with $h(x)\ip{u_h}{\Phi(x)}\ge\theta/(18B)$ at every cube point (Theorem~\ref{thm:margin}). Counting with this margin and applying a random Gaussian projection, as in the classical conversion from margin to dimension \citep{BES02,KMS20}, then give $\dc(\Hc)\le4\cdot10^6(B/\theta)^4(n+1)$. Since $S=m(n+1)$, this confirms Open Question~1 for two-layer networks in this regime, with a deterministic feature map that represents every target exactly. The next two paragraphs explain why the regime is restrictive enough that this confirmation is mainly a statement about what the process cannot learn.
 
 The same margin bounds the VC dimension by $162B^2/\theta^2$, which is $2592B^2$ at $\eps=1/4$ and, since $B\le12$, a constant independent of $n$. The hypothesis of Theorem~\ref{thm:margin} can therefore hold only for classes of bounded VC dimension, and the theorem is best read as a limitation: at bounded effective time the process learns distribution-free only classes that already have a large margin in the Gaussian ReLU kernel. The dimension bound does not follow from the VC bound alone. There are classes on $N$ points with VC dimension $2$ and dimension complexity $\Omega(N^{1/2}/\log N)$ \citep[Theorem~2]{AMY16}, so on the cube a class of bounded VC dimension can have $\dc(\Hc)=2^{\Omega(n)}$; it is the uniform kernel margin that yields dimension linear in $n$.
+
+A two-point marginal makes the limitation sharper. A target that is not constant takes different values at two adjacent points $x$ and $x'$ of the cube. Since ReLU is $1$-Lipschitz, $\norm{\Phi(x)-\Phi(x')}_{\Kc}\le2/\sqrt n$, so the uniform distribution $D$ on $\{x,x'\}$ has $A_D(h)\le1/\sqrt n$, and Theorem~\ref{thm:risk} gives $\Risk(h,D)\ge1/2-\Delta-9B/\sqrt n$ (Corollary~\ref{cor:edge}). Under the hypotheses of Theorem~\ref{thm:margin}, every target in $\Hc$ is therefore constant once $n>(18B/\theta)^2$, which at $\eps=1/4$ and $B=12$ means $n>746{,}496$. Above that dimension the process cannot learn even one nonconstant target under every marginal at bounded effective time, and the dimension bound of Theorem~\ref{thm:margin} matters only for smaller $n$. We keep the dimension bound because it is the representation that the learning premise produces through the kernel margin; the edge argument measures how strong that premise is.
 
 The proof compares the trained network with simpler recurrences. Writing $b=\sqrt m\,a$ makes the initial output coefficients standard Gaussian and gives output-layer steps of size $\gamma=\eta m$ against normalized ReLU features, so $B=\gamma T$ measures the accumulated functional step. The condition on $T$ keeps individual stochastic steps small at fixed $B$. A frozen-feature approximation of the scores usually yields a classification result only after small output margins are controlled. Here that control comes from the initialization. Remove the label-dependent part of the population logistic update, keeping its damping term and the Gaussian output initialization. The resulting recurrence has a symmetric score distribution. At the start of the tail its density is at most $e$ times a Gaussian density, and from there the tail score is strictly increasing along a suitable direction, so a small perturbation of the score changes its sign only with small probability. The labels enter the population update through one vector, their correlation $\mu$ with the normalized initial features. If $\mu$ is small, the trained network stays too close in risk to the symmetric recurrence to beat random guessing by much, and averaging over the hidden layer turns $\norm\mu$ into $A_D(h)$.
 
@@ -97,7 +99,7 @@ Dividing by $q$ does not change the sign of the tail sum. The risk is
  \Risk(h,D)=\E_{W_0,a_0,\,(x_t)_{t<T}\sim D^T}
        \Pr_{x\sim D}[G(x)\ne h(x)],
 \]
-with an independent test point. The learning premise at error $\eps$ is
+with an independent test point; we write $\err_D(G,h)=\Pr_{x\sim D}[G(x)\ne h(x)]$. The learning premise at error $\eps$ is
 \begin{equation}
  \forall h\in\Hc\ \forall D\in\Delta(\X_n),\qquad \Risk(h,D)\le\eps.
  \label{eq:premise}
@@ -132,11 +134,17 @@ For every Boolean target $h$ and every marginal $D$,
 \end{equation}
 \end{theorem}
 
-The bound holds for every Boolean target and every marginal, including point masses. For a concrete instance, $m\ge2^{20}n$ and $T\ge2^{24}$ give $\Delta\le471/4096<1/8$, and then
+The bound holds for every Boolean target and every marginal, including point masses. The proof also bounds $\Pr_x[F(x)h(x)<0]$, the error with ties counted as correct that \citet{FKS26} use, so the result does not depend on the convention $\sgn0=1$; it uses the derivative at a zero preactivation only through $\norm{a_t\odot v_t}\le\norm{a_t}$. A concrete instance of the thresholds is the following.
+
+\begin{corollary}[A numerical instance]
+\label{cor:instance}
+If $m\ge2^{20}n$, $T\ge2^{24}$, and $0<B\le12$, then $\Delta\le471/4096<1/8$, and for every $h$ and $D$,
 \begin{equation}
  \Risk(h,D)\ge\frac38-9B A_D(h).
  \label{eq:risk-simple}
 \end{equation}
+\end{corollary}
+
 Applied to every pair in a learned class, Theorem~\ref{thm:risk} gives the representation theorem.
 
 \begin{theorem}[Kernel margin from success under every marginal]
@@ -158,7 +166,16 @@ and
 The conditions $m\ge2^{17}n/\theta$ and $T\ge(216B/\theta)^2$ imply $m\ge576n$, $\gamma\le1/2$, and $\Delta\le\theta/2$. The feature map behind the dimension bound is deterministic and may depend on $\Hc$, but not on the target or the marginal.
 \end{theorem}
 
-In the regime of \eqref{eq:risk-simple}, $m\ge2^{20}n$ and $T\ge2^{24}$, any $\eps<1/4$ gives $\theta>1/4>2\Delta$, so every target has margin $1/(72B)$ in $\Kc$ and $\VC(\Hc)\le2592B^2$. Open Question~1 asks for $\dc(\Hc)\le C\cdot ST$ with $S=m(n+1)$ parameters. Theorem~\ref{thm:margin} gives this with a universal constant $C$ for every choice of $m$, $T$, and $\eta$ in the regime, since $B\le12$ and $\theta\ge1/4$ there.
+In the regime of Corollary~\ref{cor:instance}, any $\eps<1/4$ gives $\theta>1/4>2\Delta$, so every target has margin at least $1/(72B)$ in $\Kc$ and $\VC(\Hc)\le2592B^2$. Open Question~1 asks for $\dc(\Hc)\le C\cdot ST$ with $S=m(n+1)$ parameters. Theorem~\ref{thm:margin} gives this with a universal constant $C$ for every choice of $m$, $T$, and $\eta$ in that regime, since $B\le12$ and $\theta\ge1/4$ there. The next corollary shows how little the premise allows in high dimension.
+
+\begin{corollary}[Adjacent points]
+\label{cor:edge}
+Suppose $m\ge576n$, $0<B\le12$, and $\gamma\le1/2$. For every target $h$ that is not constant there is a marginal $D$ supported on two adjacent points of $\X_n$ with
+\[
+ \Risk(h,D)\ge\frac12-\Delta-\frac{9B}{\sqrt n}.
+\]
+Consequently, under the hypotheses of Theorem~\ref{thm:margin}, every $h\in\Hc$ is constant if $n>(18B/\theta)^2$.
+\end{corollary}
 
 \section{Proof outline}
 \label{sec:outline}
@@ -166,7 +183,7 @@ Condition first on the initial hidden layer. Its normalized ReLU features are
 \[
  \psi(x)=m^{-1/2}\relu(W_0x).
 \]
-With high probability they satisfy $7/16\le\norm{\psi(x)}^2\le9/16$ at every cube point. On this event, the tail score of the trained network is within $\kappa$ of a linear logistic-SGD recurrence on the features $\psi$, uniformly over labeled training histories and test points. This estimate allows gates to change. It follows from a bound on the displacement of the input layer and the global Lipschitz property of ReLU.
+With high probability they satisfy $7/16\le\norm{\psi(x)}^2\le9/16$ at every cube point. On this event and on $\{\norm{a_0}\le2\}$, the tail score of the trained network is within $\kappa$ of a linear logistic-SGD recurrence on the features $\psi$, uniformly over labeled training histories and test points. This estimate allows gates to change. It follows from a bound on the displacement of the input layer and the global Lipschitz property of ReLU.
 
 The linear recurrence has step size $\gamma=\eta m$ and starts at $b_0=\sqrt m\,a_0\sim N(0,I_m)$. Conditionally on each initial vector, its stochastic trajectory differs in mean square by at most $\gamma^2\Lambda T$ from its population recurrence, where $\Lambda=9/16$. Nonexpansivity of logistic gradient steps gives this estimate without an exponential dependence on $T$. Because the estimate holds conditionally, it can later be integrated against the anti-concentration bound, at a classification cost of order $B/\sqrt T$.
 
@@ -227,21 +244,23 @@ Fix $C_0\ge2^{20}$, an integer $T_0\ge2^{24}$, and $B\in(0,12]$. For each $n$, s
 \[
  w_{0j}^\top x_n>0\quad\text{and}\quad w_{1j}^\top x_n<0.
 \]
-For every fixed integer $J$, $\Pr[N_n\ge J]\to1$ as $n\to\infty$. All these schedules satisfy the numerical regime of Theorem~\ref{thm:risk}.
+For every fixed integer $k_0$, $\Pr[N_n\ge k_0]\to1$ as $n\to\infty$. All these schedules satisfy the conditions of Corollary~\ref{cor:instance}.
 \end{proposition}
+
+The convergence is slow at these constants. The expected number of candidate rows in the proof is of order $B\sqrt n/(T_0\sqrt{C_0})$, so with $C_0=2^{20}$ and $T_0=2^{24}$ first-step crossings at the test point appear only in very high dimension. The proposition shows that the hypotheses of Theorem~\ref{thm:risk} do not keep the gates fixed, which is what the score comparison needs to handle.
 
 The kernel correlation also yields a direct obstruction for high-order parities. Under the uniform distribution on the cube, the Gaussian law gives every Fourier coefficient of a fixed degree the same expected squared magnitude, and Parseval's identity bounds their sum by $1/2$.
 
 \begin{corollary}[Parity obstruction]
 \label{cor:parity}
-Suppose $m\ge2^{20}n$, $T\ge2^{24}$, and $0<B\le12$. For every $A\subseteq[n]$ with $|A|=k$,
+Under the conditions of Corollary~\ref{cor:instance}, for every $U\subseteq[n]$ with $|U|=k$,
 \begin{equation}
- \Risk(\chi_A,\Unif(\X_n))
+ \Risk(\chi_U,\Unif(\X_n))
  \ge\frac38-\frac{9B}{\sqrt{2\binom nk}},
- \qquad \chi_A(x)=\prod_{i\in A}x_i.
+ \qquad \chi_U(x)=\prod_{i\in U}x_i.
  \label{eq:parity}
 \end{equation}
-In particular, if $\binom nk>2592B^2$, the process does not learn $\chi_A$ to expected error below $1/4$ under the uniform marginal.
+In particular, if $\binom nk>2592B^2$, the process does not learn $\chi_U$ to expected error below $1/4$ under the uniform marginal.
 \end{corollary}
 
 \section{A fixed-gate regime}
@@ -264,7 +283,7 @@ For $\tau=\eta T\sqrt n$ and each initialization, define the exceptional set
 \end{equation}
 and the bound
 \[
- B_{n,m}(\tau)=\min\left\{1,\frac{(2/\pi)\sqrt{nm}\sinh\tau+\sqrt{2/\pi}\,m\sqrt{n-1}\,(\cosh\tau-1)}{2-\cosh\tau}\right\}.
+ \beta_{n,m}(\tau)=\min\left\{1,\frac{(2/\pi)\sqrt{nm}\sinh\tau+\sqrt{2/\pi}\,m\sqrt{n-1}\,(\cosh\tau-1)}{2-\cosh\tau}\right\}.
 \]
 
 \begin{theorem}[Fixed gates at small total step]
@@ -272,12 +291,12 @@ and the bound
 Let $\eta\ge0$ and $\tau=\eta T\sqrt n\le1$.
 \begin{enumerate}
 \item For every labeled history with labels in $[-1,1]$ and every $x\notin\Bfr$, every gate at $x$ keeps its initial nonzero sign up to time $T$, and $F(x)=\ip{C}{\phi_{W_0}(x)}$ with $C_{ji}=q^{-1}\sum_{t\in I_T}a_{tj}(W_t)_{ji}$.
-\item For every fixed marginal $D$, $\E_{W_0,a_0}D(\Bfr)\le B_{n,m}(\tau)\le2\sqrt{nm}\,\tau+m\sqrt n\,\tau^2$.
-\item If \eqref{eq:premise} holds at error $\eps$, the law of $\phi_{W_0}$ witnesses $\pdc_{\eps+B_{n,m}(\tau)}(\Hc)\le mn$. In particular, $\eta\le1/m$ and $m\ge16n^2T^2/\delta^2$ with $0<\delta<1$ give $\pdc_{\eps+\delta}(\Hc)\le mn$.
+\item For every fixed marginal $D$, $\E_{W_0,a_0}D(\Bfr)\le \beta_{n,m}(\tau)\le2\sqrt{nm}\,\tau+m\sqrt n\,\tau^2$.
+\item If \eqref{eq:premise} holds at error $\eps$, the law of $\phi_{W_0}$ witnesses $\pdc_{\eps+\beta_{n,m}(\tau)}(\Hc)\le mn$. In particular, $\eta\le1/m$ and $m\ge16n^2T^2/\delta^2$ with $0<\delta<1$ give $\pdc_{\eps+\delta}(\Hc)\le mn$.
 \end{enumerate}
 \end{theorem}
 
-The set $\Bfr$ depends only on the initialization and on $(n,m,T,\eta)$, and part~1 holds for all training histories at once, including histories chosen after seeing the initialization. Only the mass estimate needs the marginal to be fixed in advance. Outside $\Bfr$ the identity in part~1 is exact and keeps every product of trained weights in $C$, so no output margin is needed to transfer classification error. Taking $\delta=\eps$ gives $\pdc_{2\eps}(\Hc)\le mn<S$, an instance of the probabilistic relaxation proposed by \citet[Section~4]{FKS26}. In this regime $B=\eta mT$ may be as large as $T$, but the width must grow like $n^2T^2$; the two theorems therefore cover different parts of the parameter space, and neither implies the other.
+The set $\Bfr$ depends only on the initialization and on $(n,m,T,\eta)$, and part~1 holds for all training histories at once, including histories chosen after seeing the initialization. Only the mass estimate needs the marginal to be fixed in advance. Outside $\Bfr$ the identity in part~1 is exact and keeps every product of trained weights in $C$, so no output margin is needed to transfer classification error. For $0<\eps<1$, taking $\delta=\eps$ gives $\pdc_{2\eps}(\Hc)\le mn<S$, an instance of the probabilistic relaxation proposed by \citet[Section~4]{FKS26}. In this regime $B=\eta mT$ may be as large as $T$, but the width must grow like $n^2T^2$; the two theorems therefore cover different parts of the parameter space, and neither implies the other.
 
 \section{Formal verification}
 \label{sec:lean}
@@ -296,7 +315,7 @@ Lemma~\ref{lem:density} & \lean{density\_bound}\\
 Lemma~\ref{lem:smallball} & \lean{smallball}, \lean{null\_risk}\\
 Identity \eqref{eq:kernelidentity} & \lean{kernel\_identity}, \lean{kernelCorr\_eq\_norm}, \lean{Phi\_norm\_sq}\\
 Theorem~\ref{thm:risk} & \lean{risk\_lower\_bound}\\
-Instance \eqref{eq:risk-simple} & \lean{lossTerm\_regime}, \lean{risk\_lower\_bound\_regime}\\
+Corollary~\ref{cor:instance} & \lean{lossTerm\_regime}, \lean{risk\_lower\_bound\_regime}\\
 Lemma~\ref{lem:geometry}, margin and growth & \lean{margin\_and\_vc}, \lean{growth\_bound}\\
 Theorem~\ref{thm:margin}, margin and VC & \lean{kernel\_margin}, \lean{lossTerm\_le\_half}, \lean{regime\_of\_large}\\
 Margin $1/(72B)$ for $\eps<1/4$ & \lean{kernel\_margin\_regime}\\
@@ -309,10 +328,10 @@ Theorem~\ref{thm:gate} & \lean{gates\_fixed}, \lean{exact\_representation}, \lea
 \label{tab:lean}
 \end{table}
 
-Two parts of the paper are not formalized. The first is the dimension bound in Lemma~\ref{lem:geometry} and Theorem~\ref{thm:margin}: the Gaussian projection step, with its chi-square tail bound, is used on paper only, so the formal statements stop at the margin, the VC bound, and the Sauer--Shelah count. The second is Proposition~\ref{prop:crossings}. Several formal proofs take a different route from the text. Nonexpansivity of the logistic maps and the Jacobian estimates \eqref{eq:Jac} and \eqref{eq:derivative} are proved with secant slopes of $\tanh$ and of the logistic function, obtained from the one-variable mean value theorem, without Jacobians of the vector-valued maps. Lemma~\ref{lem:score} bounds the movement of both layers by induction on $t$ in place of the bootstrap over $A$ and $D_W$, and Lemma~\ref{lem:rows} uses the addition formulas for $\cosh$ and $\sinh$ in place of the expansion of the matrix power. The first part of Lemma~\ref{lem:init} evaluates the two Chernoff exponents at $\zeta=\pm1/512$ directly instead of bounding $(\log M)''$. The VC bound chooses the signs one at a time with the parallelogram law instead of averaging over random signs. Mathlib does not provide the density of the standard Gaussian measure on $\R^m$, so the formalization identifies it through characteristic functions before applying the change of variables formula in Lemma~\ref{lem:density}.
+Two parts of the paper are not formalized. The first is the dimension bound in Lemma~\ref{lem:geometry} and Theorem~\ref{thm:margin}: the Gaussian projection step, with its chi-square tail bound, is used on paper only, so the formal statements stop at the margin, the VC bound, and the Sauer--Shelah count. The second is Proposition~\ref{prop:crossings}. Several formal proofs take a different route from the text. Nonexpansivity of the logistic maps and the Jacobian estimates \eqref{eq:Jac} and \eqref{eq:derivative} are proved with secant slopes of $\tanh$ and of the logistic function, obtained from the one-variable mean value theorem, without Jacobians of the vector-valued maps. Lemma~\ref{lem:score} bounds the movement of both layers by induction on $t$ in place of the bootstrap over $\bar a$ and $D_W$, and Lemma~\ref{lem:rows} uses the addition formulas for $\cosh$ and $\sinh$ in place of the expansion of the matrix power. The first part of Lemma~\ref{lem:init} evaluates the two Chernoff exponents at $\zeta=\pm1/512$ directly instead of bounding $(\log\mathcal M)''$. The VC bound chooses the signs one at a time with the parallelogram law instead of averaging over random signs. Mathlib does not provide the density of the standard Gaussian measure on $\R^m$, so the formalization identifies it through characteristic functions before applying the change of variables formula in Lemma~\ref{lem:density}.
 
 \section{Scope}
-The main theorems hold at bounded effective time. The bound $B\le12$ enters through the density and anti-concentration lemmas, and we do not know whether success at larger effective time, for instance with $B$ growing with $n$, forces any representation bound. The thresholds on $m$ and $T$ are sufficient conditions chosen to keep the proofs short and do not locate a transition, and the constants are large: at $\eps=1/4$ and $B=12$ the dimension bound is of order $10^{13}(n+1)$. The score comparison allows many gate crossings, but the conclusion is a kernel-regime statement and gives no separation between feature learning and kernel methods. The representation in Theorem~\ref{thm:margin} is existential, since its last step is a random projection, and we give no efficient construction of the feature map.
+The main theorems hold at bounded effective time. The bound $B\le12$ enters through the density and anti-concentration lemmas, where the method needs $B<128/9$, and it also fixes the constants of the score comparison; we do not know whether success at larger effective time, for instance with $B$ growing with $n$, forces any representation bound. The thresholds on $m$ and $T$ are sufficient conditions chosen to keep the proofs short and do not locate a transition, and the constants are large: at $\eps=1/4$ and $B=12$ the dimension bound is of order $10^{13}(n+1)$. The score comparison allows many gate crossings, but the conclusion is a kernel-regime statement and gives no separation between feature learning and kernel methods. The representation in Theorem~\ref{thm:margin} is existential, since its last step is a random projection, and we give no efficient construction of the feature map.
 
 \section*{AI Disclosure}
 Claude (Anthropic) was used to write the Lean~4 formalization described in Section~\ref{sec:lean}, to check the bibliography against publisher and arXiv records, and to revise the exposition. The author is responsible for the results and their presentation.
@@ -426,9 +445,9 @@ The initialization satisfies
 \begin{proof}
 Fix $x$. The variables $Y_j=\relu(w_{0j}^\top x)^2$ are independent with the law of $Y=Z^2\ind\{Z>0\}$ for $Z\sim N(0,1)$. Its mean is $1/2$ and
 \[
- M(\zeta)=\E e^{\zeta Y}=\frac{1+(1-2\zeta)^{-1/2}}2.
+ \mathcal M(\zeta)=\E e^{\zeta Y}=\frac{1+(1-2\zeta)^{-1/2}}2.
 \]
-For $|\zeta|\le1/4$, $M\ge1/2$ and $M''\le(3/2)2^{5/2}$. Hence $(\log M)''\le32$. Since $(\log M)'(0)=1/2$, integration gives
+For $|\zeta|\le1/4$, $\mathcal M\ge1/2$ and $\mathcal M''\le(3/2)2^{5/2}$. Hence $(\log\mathcal M)''\le32$. Since $(\log\mathcal M)'(0)=1/2$, integration gives
 \[
  \log\E e^{\zeta(Y-1/2)}\le16\zeta^2.
 \]
@@ -463,12 +482,12 @@ The same bound holds for the normalized tail scores.
 \begin{proof}
 Write
 \[
- A=\max_{t\le T}\norm{a_t},\qquad
+ \bar a=\max_{t\le T}\norm{a_t},\qquad
  D_W=\max_{t\le T}\norm{W_t-W_0}_F.
 \]
 From the input-layer updates,
 \begin{equation}
- D_W\le\eta T\sqrt n\, A=\frac{B\sqrt n}{m}A.
+ D_W\le\eta T\sqrt n\,\bar a=\frac{B\sqrt n}{m}\bar a.
  \label{eq:DW}
 \end{equation}
 ReLU is 1-Lipschitz, so
@@ -477,9 +496,9 @@ ReLU is 1-Lipschitz, so
 \]
 Summing the output-layer increments and using \eqref{eq:DW} yields
 \[
- A\le\norm{a_0}+B\sqrt{\Lambda/m}+\frac{B^2n}{m^2}A.
+ \bar a\le\norm{a_0}+B\sqrt{\Lambda/m}+\frac{B^2n}{m^2}\bar a.
 \]
-Under the hypotheses, $B^2n/m^2\le1/4$ and $B\sqrt{\Lambda/m}\le3/8$. Thus $A<4$ and $D_W\le4B\sqrt n/m$.
+Under the hypotheses, $B^2n/m^2\le1/4$ and $B\sqrt{\Lambda/m}\le3/8$. Thus $\bar a<4$ and $D_W\le4B\sqrt n/m$.
 
 Let $b_t=\sqrt m\,a_t$ and define
 \[
@@ -493,7 +512,7 @@ Uniformly in $t$ and $x$,
  \label{eq:residuals}
 \end{equation}
 
-For fixed $(x,y)$, the map $S_{x,y}(v)=v+\gamma g(y,v^\top\psi(x))\psi(x)$ has derivative $I-\gamma\ell''\psi(x)\psi(x)^\top$ with $0\le\ell''\le1/4$. As $\gamma\le1/2$ and $\norm{\psi(x)}^2\le\Lambda$, this derivative is positive semidefinite with operator norm at most one, so $S_{x,y}$ is nonexpansive. Comparing the update of $b_t$ with $S_{x_t,y_t}(b_t)$ gives a residual of norm at most
+For fixed $(x,y)$, the map $\mathcal S_{x,y}(v)=v+\gamma g(y,v^\top\psi(x))\psi(x)$ has derivative $I-\gamma\ell''\psi(x)\psi(x)^\top$, where $\ell''=-\partial_zg(y,z)=e^{yz}/(1+e^{yz})^2\in(0,1/4]$. As $\gamma\le1/2$ and $\norm{\psi(x)}^2\le\Lambda$, this derivative is positive semidefinite with operator norm at most one, so $\mathcal S_{x,y}$ is nonexpansive. Comparing the update of $b_t$ with $\mathcal S_{x_t,y_t}(b_t)$ gives a residual of norm at most
 \[
  \gamma\bigl(\sqrt\Lambda\,r_*/4+e_*\bigr).
 \]
@@ -506,7 +525,7 @@ Consequently,
  |f_t(x)-u_t^\top\psi(x)|
  \le(1+B\Lambda/4)r_*+B\sqrt\Lambda\,e_*.
 \]
-The first term is at most $516n/m$. The second is at most $432n/m^{3/2}\le18n/m$, since $m\ge576$. Their sum is at most $544n/m$. Averaging over $I_T$ preserves the bound.
+The first term is at most $516n/m$. The second is at most $432n/m^{3/2}\le18n/m$, since $m\ge576$. Their sum is at most $534n/m\le544n/m$. Averaging over $I_T$ preserves the bound.
 \end{proof}
 
 \section{Population comparison and Gaussian anti-concentration}
@@ -536,7 +555,7 @@ By \eqref{eq:logistic-decomp}, $v\mapsto R(v)+\gamma\mu/2$ is the conditional me
 
 \begin{lemma}[Sampling and label effects]
 \label{lem:population}
-Conditionally on $W_0$ and $b_0$, for $t\le T$,
+Assume $W_0\in\Gcal$ and $\gamma\le1/2$. Conditionally on $W_0$ and $b_0$, for $t\le T$,
 \begin{equation}
  \E\norm{u_t-v_t}^2\le t\gamma^2\Lambda.
  \label{eq:samplevariance}
@@ -551,7 +570,7 @@ In particular, if $\bar u=q^{-1}\sum_{t\in I_T}u_t$ and similarly for $\bar v$ a
  \E\bigl[\norm{\bar u-\bar v}^2\bigm| W_0,b_0\bigr]
  \le\frac{\Lambda B^2}{T},
  \qquad
- |\ip{\bar v-\bar z}{\psi(x)}|\le\frac{3B}{8}\norm\mu.
+ |\ip{\bar v-\bar z}{\psi(x)}|\le\frac{3B}{8}\norm\mu\quad(x\in\X_n).
  \label{eq:tailcomparisons}
 \end{equation}
 \end{lemma}
@@ -586,11 +605,11 @@ For every $v$, the matrix $H(v)$ is positive semidefinite with $\operatorname{tr
 \]
 The trace bound keeps this factor independent of the width. Since $\tanh$ is increasing and $1$-Lipschitz, $\ip{R(v)-R(v')}{v-v'}\ge(1-\omega)\norm{v-v'}^2$, so $R$ is injective. Also $R$ is nonexpansive and fixes zero, so $\norm{R(b)}\le\norm b$ and $\varphi(R(b))\ge\varphi(b)$ for the standard Gaussian density $\varphi$.
 
-Fix a Borel set $E$ and put $S=R^{-1}(E)$, so that $R(S)\subseteq E$. The change of variables formula for the injective map $R$ gives
+Fix a Borel set $E$ and put $E'=R^{-1}(E)$, so that $R(E')\subseteq E$. The change of variables formula for the injective map $R$ gives
 \[
- \Pr(b_0\in E)\ge\int_{R(S)}\varphi
- =\int_S\det DR(b)\,\varphi(R(b))\,db
- \ge(1-\omega)\Pr(b_0\in S).
+ \Pr(b_0\in E)\ge\int_{R(E')}\varphi
+ =\int_{E'}\det DR(b)\,\varphi(R(b))\,db
+ \ge(1-\omega)\Pr(b_0\in E').
 \]
 Thus the law of $R(b_0)$ is at most $(1-\omega)^{-1}$ times the standard Gaussian law. Pushing forward by $R$ preserves such a domination, so by induction the law of $z_s=R^s(b_0)$ is at most $(1-\omega)^{-s}$ times the standard Gaussian law. Finally $(1-\omega)^{-s}\le\exp(s\omega/(1-\omega))\le e$, because $s\omega\le1-\omega$: indeed $\gamma(s+1)\le(B+\gamma)/2+\gamma\le27/4$, so $\omega(s+1)=9\gamma(s+1)/64\le243/256$. This proves \eqref{eq:density}.
 \end{proof}
@@ -626,9 +645,9 @@ $J_{j+1}-J_j=-\gamma H(z^{[v]}_j)J_j$ gives
 \end{equation}
 Since $e^\top Je\ge1-\norm{J-I}_{\op}$ for every unit vector $e$, this bound suffices below, although the $J_j$ need not be symmetric.
 
-Suppose first that $v$ is standard Gaussian. For fixed $x$, put $e_x=\psi(x)/\norm{\psi(x)}$ and decompose $v=\alpha e_x+v_\perp$. Conditionally on $v_\perp$, $\alpha$ is a standard Gaussian. At every $\alpha$ and $v_\perp$,
+Suppose first that $v$ is standard Gaussian. For fixed $x$, put $e_x=\psi(x)/\norm{\psi(x)}$ and decompose $v=\beta e_x+v_\perp$. Conditionally on $v_\perp$, $\beta$ is a standard Gaussian. At every $\beta$ and $v_\perp$,
 \begin{align}
- \frac{d}{d\alpha}\left[\frac1{L+1}\sum_{j=0}^L
+ \frac{d}{d\beta}\left[\frac1{L+1}\sum_{j=0}^L
              \ip{z^{[v]}_j}{\psi(x)}\right]
  &=\norm{\psi(x)}\,e_x^\top
      \left(\frac1{L+1}\sum_{j=0}^L J_j\right)e_x\notag\\
@@ -636,7 +655,7 @@ Suppose first that $v$ is standard Gaussian. For fixed $x$, put $e_x=\psi(x)/\no
  \ge\frac{5\sqrt7}{128}.
  \label{eq:derivative}
 \end{align}
-The preimage of $[-r,r]$ in $\alpha$ is therefore an interval of length at most $256r/(5\sqrt7)$, and the maximum of the one-dimensional Gaussian density bounds its probability by
+The preimage of $[-r,r]$ in $\beta$ is therefore an interval of length at most $256r/(5\sqrt7)$, and the maximum of the one-dimensional Gaussian density bounds its probability by
 \[
  \frac{256r}{5\sqrt{14\pi}}<8r.
 \]
@@ -651,21 +670,21 @@ The recurrence $R$ is odd, so $Z_D(x;-b_0)=-Z_D(x;b_0)$. The small-ball estimate
 Fix $h$ and $D$ before initialization, and condition on $W_0\in\Gcal$. For a test point $x$, put
 \[
  Z=Z_D(x;b_0),\qquad
- d=\kappa+\frac{3B}{8}\norm\mu,\qquad
+ d_0=\kappa+\frac{3B}{8}\norm\mu,\qquad
  E_x=\ip{\bar u-\bar v}{\psi(x)}.
 \]
 Lemmas~\ref{lem:score} and~\ref{lem:population} show that on $\{\norm{a_0}\le2\}$,
 \[
- |F(x)-Z|\le d+|E_x|,\qquad
+ |F(x)-Z|\le d_0+|E_x|,\qquad
  \E[|E_x|^2\mid W_0,b_0]\le\sigma^2:=\frac{\Lambda^2 B^2}{T}.
 \]
 The second bound holds conditionally on every $b_0$. This lets us integrate the error probability against the Gaussian initialization with no independence between $E_x$ and $Z$.
 
-If $\sgn F(x)\ne\sgn Z$, then $|Z|\le|F(x)-Z|$. Conditionally on $b_0$ with $\norm{a_0}\le2$ and $|Z|>d$, Markov's inequality therefore bounds the probability of disagreement by $\min\{1,\sigma^2/(|Z|-d)^2\}$. Give this minimum the value one when $|Z|\le d$. By the layer-cake formula and Lemma~\ref{lem:smallball}, its expectation over the initialization is at most
+If $\sgn F(x)\ne\sgn Z$, then $|Z|\le|F(x)-Z|$. Conditionally on $b_0$ with $\norm{a_0}\le2$ and $|Z|>d_0$, Markov's inequality therefore bounds the probability of disagreement by $\min\{1,\sigma^2/(|Z|-d_0)^2\}$. Give this minimum the value one when $|Z|\le d_0$. By the layer-cake formula and Lemma~\ref{lem:smallball}, its expectation over the initialization is at most
 \begin{align*}
- \int_0^1\Pr_{b_0}\left(|Z|\le d+\frac{\sigma}{\sqrt t}\,\middle|\,W_0\right)dt
- &\le24\int_0^1\left(d+\frac{\sigma}{\sqrt t}\right)dt\\
- &=24d+48\sigma.
+ \int_0^1\Pr_{b_0}\left(|Z|\le d_0+\frac{\sigma}{\sqrt t}\,\middle|\,W_0\right)dt
+ &\le24\int_0^1\left(d_0+\frac{\sigma}{\sqrt t}\right)dt\\
+ &=24d_0+48\sigma.
 \end{align*}
 The symmetric classifier has expected error $1/2$. Averaging over the test marginal and adding the probability of $\{\norm{a_0}>2\}$ to the disagreement gives
 \[
@@ -688,18 +707,20 @@ The hidden rows are independent and identically distributed, which gives the exa
  \label{eq:kernelidentity}
 \end{align}
 Thus $\E[\ind_{\Gcal}\norm\mu]\le A_D(h)$ by the Cauchy--Schwarz inequality. This proves \eqref{eq:risk-general}.
+\end{proof}
 
-For \eqref{eq:risk-simple}, $m\ge2^{20}n$ and $T\ge2^{24}$ give $\rho_W,\rho_a\le1/64$ and
+\begin{proof}[Proof of Corollary~\ref{cor:instance}]
+The conditions give $m\ge576n$ and $\gamma=B/T\le12/2^{24}<1/2$, so Theorem~\ref{thm:risk} applies. Also $\rho_W,\rho_a\le1/64$ and
 \[
  \frac{27B}{\sqrt T}\le\frac{324}{4096},\qquad
  24\kappa\le\frac{51}{4096}.
 \]
-With $\rho_W/2\le32/4096$ and $\rho_a\le64/4096$, the total loss is at most $471/4096<1/8$.
+With $\rho_W/2\le32/4096$ and $\rho_a\le64/4096$, the total loss is at most $471/4096<1/8$, and \eqref{eq:risk-general} gives \eqref{eq:risk-simple}.
 \end{proof}
 
 \begin{lemma}[Convex separation and ordinary dimension]
 \label{lem:geometry}
-Let $X$ be a finite set of size $M\ge2$, let $\Phi:X\to\Kc$ satisfy $\norm{\Phi(x)}^2\le1/2$, and let $c>0$. Suppose a class $\Hc$ of functions $X\to\{-1,1\}$ satisfies
+Let $X$ be a nonempty finite set with $M$ points, let $\Phi:X\to\Kc$ satisfy $\norm{\Phi(x)}^2\le1/2$, and let $c>0$. Suppose a nonempty class $\Hc$ of functions $X\to\{-1,1\}$ satisfies
 \begin{equation}
  \norm{\E_{x\sim D}h(x)\Phi(x)}\ge c\qquad\text{for all }h\in\Hc\text{ and }D\in\Delta(X).
  \label{eq:allmarginal}
@@ -721,20 +742,20 @@ is compact in a finite-dimensional subspace, and its elements are exactly the ve
 \]
 Thus $u_h=p_h/\norm{p_h}$ has the stated margin at every point. It depends on $h$ but not on $D$.
 
-Suppose $r$ points are shattered. For every sign vector $\sigma\in\{-1,1\}^r$, the unit vector of a target realizing $\sigma$ gives
+Suppose $r$ points are shattered. For every sign vector $s\in\{-1,1\}^r$, the unit vector of a target realizing $s$ gives
 \[
- rc\le\left\|\sum_{i=1}^r\sigma_i\Phi(x_i)\right\|.
+ rc\le\left\|\sum_{i=1}^rs_i\Phi(x_i)\right\|.
 \]
 Averaging the square over independent fair signs gives $r^2c^2\le r/2$, so $r\le1/(2c^2)$. The Sauer--Shelah lemma then gives the bound on $|\Hc|$.
 
-It remains to project the finite collection of input and target vectors. All of them lie in the span of $\Phi(X)$, which is finite-dimensional. A matrix $J$ with independent $N(0,1/d)$ entries satisfies, for each fixed vector $z$ and $0<\alpha\le1/2$,
+It remains to project the finite collection of input and target vectors. All of them lie in the span of $\Phi(X)$, which is finite-dimensional. A matrix $J$ with independent $N(0,1/d)$ entries satisfies, for each fixed vector $z$ and $0<\xi\le1/2$,
 \[
- \Pr\left(\big|\norm{Jz}^2-\norm z^2\big|>\alpha\norm z^2\right)
- \le2e^{-d\alpha^2/8},
+ \Pr\left(\big|\norm{Jz}^2-\norm z^2\big|>\xi\norm z^2\right)
+ \le2e^{-d\xi^2/8},
 \]
-by the elementary chi-square Chernoff bound. Apply it to $u_h+\Phi(x)$ and $u_h-\Phi(x)$ for all $h$ and $x$, with $\alpha=c/2\le2^{-3/2}$. Since $4|\Hc|Me^{-dc^2/32}<1$ for some integer $d\le1+32c^{-2}\log(4|\Hc|M)$, some realization of $J$ preserves all these squared norms to relative error $\alpha$. Polarization then bounds each inner-product error by
+by the elementary chi-square Chernoff bound. Apply it to $u_h+\Phi(x)$ and $u_h-\Phi(x)$ for all $h$ and $x$, with $\xi=c/2\le2^{-3/2}$. Since $4|\Hc|Me^{-dc^2/32}<1$ for some integer $d\le1+32c^{-2}\log(4|\Hc|M)$, some realization of $J$ preserves all these squared norms to relative error $\xi$. Polarization then bounds each inner-product error by
 \[
- \frac\alpha2\bigl(\norm{u_h}^2+\norm{\Phi(x)}^2\bigr)
+ \frac\xi2\bigl(\norm{u_h}^2+\norm{\Phi(x)}^2\bigr)
  \le\frac{3c}{8}<c,
 \]
 so $J\Phi(x)$ and $Ju_h$ represent every target exactly. Finally $\log(4|\Hc|M)\le\log(4M)+v\log(M+1)\le(v+2)\log(M+1)$.
@@ -747,6 +768,14 @@ Fix $h\in\Hc$ and $D$. By Theorem~\ref{thm:risk} and \eqref{eq:premise}, $1/2-\D
 \]
 
 For the sufficient conditions, suppose $m\ge2^{17}n/\theta$ and $T\ge(216B/\theta)^2$. Since $\theta\le1/2$, $m\ge2^{18}n\ge576n$. If $2B\le1$ then $T\ge1\ge2B$; otherwise $T\ge(432B)^2\ge2B$. So $\gamma=B/T\le1/2$. Next, $24\kappa=13056n/m\le13056\,\theta/2^{17}<\theta/8$. Put $y=8/\theta\ge16$. Then $m/16384\ge ny$, so $\rho_W/2\le2^ne^{-ny}=e^{-n(y-\log2)}\le e^{-(y-\log2)}\le1/y=\theta/8$, since $n\ge1$ and $y-\log2\ge\log y$ for $y\ge16$. Also $\rho_a=e^{-m/2}\le e^{-y}<\theta/8$, and $27B/\sqrt T\le\theta/8$. Summing, $\Delta\le\theta/2$.
+\end{proof}
+
+\begin{proof}[Proof of Corollary~\ref{cor:edge}]
+The cube graph, with edges between points that differ in one coordinate, is connected. If $h$ is not constant, some edge $\{x,x'\}$ therefore has $h(x')=-h(x)$; let $i$ be the coordinate in which $x$ and $x'$ differ, and let $D$ be the uniform distribution on $\{x,x'\}$. Then $\E_Dh\Phi=\tfrac12h(x)(\Phi(x)-\Phi(x'))$. Since ReLU is $1$-Lipschitz and $w\sim N(0,I_n/n)$,
+\[
+ \norm{\Phi(x)-\Phi(x')}_{\Kc}^2\le\E_w\ip w{x-x'}^2=4\E_ww_i^2=\frac4n,
+\]
+so $A_D(h)\le1/\sqrt n$, and Theorem~\ref{thm:risk} gives the first claim. Under the hypotheses of Theorem~\ref{thm:margin}, a nonconstant $h\in\Hc$ would satisfy $\eps\ge\Risk(h,D)\ge1/2-\theta/2-9B/\sqrt n$, that is $\sqrt n\le18B/\theta$.
 \end{proof}
 
 \section{Proofs of the crossing and parity statements}
@@ -772,67 +801,67 @@ Let $C_n$ count these candidate rows. It is binomial, and
  \E C_n=m\Pr(b_j\le-1)\Pr(0<z_j<d_n)
  \asymp_{r_0}\frac{B n}{T_0\sqrt m}\longrightarrow\infty,
 \]
-because $m=\lceil C_0n\rceil$, $d_n\to0$, and $B$, $C_0$, $T_0$, $r_0$ are fixed. Therefore $\Pr(C_n<J)\to0$ for every fixed $J$. The count $C_n$ and the initial score are dependent, but the union bound and the variance of the score give
+because $m=\lceil C_0n\rceil$, $d_n\to0$, and $B$, $C_0$, $T_0$, $r_0$ are fixed. Therefore $\Pr(C_n<k_0)\to0$ for every fixed $k_0$. The count $C_n$ and the initial score are dependent, but the union bound and the variance of the score give
 \[
- \Pr(N_n<J)\le\Pr(C_n<J)+\Pr(f_0(x_n)>r_0)
- \le\Pr(C_n<J)+\frac1{2r_0^2}.
+ \Pr(N_n<k_0)\le\Pr(C_n<k_0)+\Pr(f_0(x_n)>r_0)
+ \le\Pr(C_n<k_0)+\frac1{2r_0^2}.
 \]
 Take the upper limit in $n$, then let $r_0\to\infty$.
 \end{proof}
 
 \begin{proof}[Proof of Corollary~\ref{cor:parity}]
-For each $w$, let $\widehat r_w(A)=\E_{x\sim\Unif(\X_n)}\chi_A(x)\relu(w^\top x)$. The Gaussian law is invariant under coordinate permutations, so
+For each $w$, let $\widehat r_w(U)=\E_{x\sim\Unif(\X_n)}\chi_U(x)\relu(w^\top x)$. The Gaussian law is invariant under coordinate permutations, so
 \[
- \ell_k=\E_w\widehat r_w(A)^2
+ \ell_k=\E_w\widehat r_w(U)^2
 \]
-depends only on $|A|=k$. Parseval's identity and nonnegativity give
+depends only on $|U|=k$. Parseval's identity and nonnegativity give
 \[
  \binom nk\ell_k
- \le\sum_{A\subseteq[n]}\E_w\widehat r_w(A)^2
+ \le\sum_{U\subseteq[n]}\E_w\widehat r_w(U)^2
  =\E_w\E_x\relu(w^\top x)^2=\frac12.
 \]
-Since $A_{\Unif}(\chi_A)^2=\ell_k$, substituting in \eqref{eq:risk-simple} proves \eqref{eq:parity}. The right side exceeds $1/4$ whenever $\binom nk>2592B^2$.
+Since $A_{\Unif}(\chi_U)^2=\ell_k$, substituting in \eqref{eq:risk-simple} proves \eqref{eq:parity}. The right side exceeds $1/4$ whenever $\binom nk>2592B^2$.
 \end{proof}
 
 \section{Proofs for the fixed-gate regime}
 \label{app:gate}
-Write $\beta=\eta\sqrt n$. The labels may be any numbers in $[-1,1]$, so $|c_t|\le\eta$.
+Write $\nu=\eta\sqrt n$. The labels may be any numbers in $[-1,1]$, so $|c_t|\le\eta$.
 
 \begin{lemma}[Row movement]
 \label{lem:rows}
 For every initialization, every labeled history, and every row $j$,
 \[
- |a_{tj}|\le|a_{0j}|\cosh(t\beta)+\norm{w_{0j}}\sinh(t\beta),\qquad
- \norm{w_{tj}-w_{0j}}\le|a_{0j}|\sinh(t\beta)+\norm{w_{0j}}\bigl(\cosh(t\beta)-1\bigr).
+ |a_{tj}|\le|a_{0j}|\cosh(t\nu)+\norm{w_{0j}}\sinh(t\nu),\qquad
+ \norm{w_{tj}-w_{0j}}\le|a_{0j}|\sinh(t\nu)+\norm{w_{0j}}\bigl(\cosh(t\nu)-1\bigr).
 \]
 No restriction on $\eta$ is needed.
 \end{lemma}
 \begin{proof}
-Fix a row and write $u_t=|a_{tj}|$ and $v_t=\norm{w_{tj}}$. Since $|c_t|\le\eta$ and $\norm{x_t}=\sqrt n$, the updates give $u_{t+1}\le u_t+\beta v_t$ and $v_{t+1}\le v_t+\beta u_t$. The $t$-th power of $\begin{psmallmatrix}1&\beta\\\beta&1\end{psmallmatrix}$ has diagonal entries $E_t=\sum_{r\text{ even}}\binom tr\beta^r$ and off-diagonal entries $O_t=\sum_{r\text{ odd}}\binom tr\beta^r$, and $\binom tr\le t^r/r!$ gives $E_t\le\cosh(t\beta)$ and $O_t\le\sinh(t\beta)$. This proves the first bound. For the displacement, sum the increments: $\norm{w_{tj}-w_{0j}}\le\beta\sum_{r<t}u_r\le O_tu_0+(E_t-1)v_0$, using $O_{t+1}=O_t+\beta E_t$ and $E_{t+1}=E_t+\beta O_t$.
+Fix a row and write $\mathfrak a_t=|a_{tj}|$ and $\mathfrak w_t=\norm{w_{tj}}$. Since $|c_t|\le\eta$ and $\norm{x_t}=\sqrt n$, the updates give $\mathfrak a_{t+1}\le \mathfrak a_t+\nu \mathfrak w_t$ and $\mathfrak w_{t+1}\le \mathfrak w_t+\nu \mathfrak a_t$. The $t$-th power of $\begin{psmallmatrix}1&\nu\\\nu&1\end{psmallmatrix}$ has diagonal entries $E_t=\sum_{r\text{ even}}\binom tr\nu^r$ and off-diagonal entries $O_t=\sum_{r\text{ odd}}\binom tr\nu^r$, and $\binom tr\le t^r/r!$ gives $E_t\le\cosh(t\nu)$ and $O_t\le\sinh(t\nu)$. This proves the first bound. For the displacement, sum the increments: $\norm{w_{tj}-w_{0j}}\le\nu\sum_{r<t}\mathfrak a_r\le O_tu_0+(E_t-1)\mathfrak w_0$, using $O_{t+1}=O_t+\nu E_t$ and $E_{t+1}=E_t+\nu O_t$.
 \end{proof}
 
 \begin{proof}[Proof of Theorem~\ref{thm:gate}]
-Put $\alpha_\tau=\sinh\tau$ and $\omega_\tau=\cosh\tau-1$. If $x\notin\Bfr$, the Cauchy--Schwarz inequality and Lemma~\ref{lem:rows} give, for every row and every $t\le T$,
+Put $\sigma_\tau=\sinh\tau$ and $\omega_\tau=\cosh\tau-1$. If $x\notin\Bfr$, the Cauchy--Schwarz inequality and Lemma~\ref{lem:rows} give, for every row and every $t\le T$,
 \[
  |\ip{w_{tj}-w_{0j}}x|\le\sqrt n\,r_j<|\ip{w_{0j}}x|,
 \]
 so every preactivation at $x$ keeps its initial nonzero sign along every history. On such a point, $f_t(x)=\sum_ja_{tj}\ind\{\ip{w_{0j}}x>0\}\ip{w_{tj}}x=\sum_{j,i}a_{tj}(W_t)_{ji}\,\phi_{W_0}(x)_{j,i}$, and averaging over $I_T$ proves part~1.
 
-For part~2 fix $x$ and a row $j$, and write $w_{0j}=Z/\sqrt n$ with $Z\sim N(0,I_n)$. Then $\Gamma=\ip{w_{0j}}x\sim N(0,1)$ and $\norm Z^2=\Gamma^2+Q^2$, where $Q$ is independent of $\Gamma$ with $\E Q\le\sqrt{n-1}$; both are independent of $a_{0j}$. The radius $r_j$ depends on $\norm{w_{0j}}$, and hence on $\Gamma$. The $j$-th event in \eqref{eq:gateset} implies
+For part~2 fix $x$ and a row $j$, and write $w_{0j}=Z/\sqrt n$ with $Z\sim N(0,I_n)$. Then $\Gamma=\ip{w_{0j}}x\sim N(0,1)$ and $\norm Z^2=\Gamma^2+V^2$, where $V$ is independent of $\Gamma$ with $\E V\le\sqrt{n-1}$; both are independent of $a_{0j}$. The radius $r_j$ depends on $\norm{w_{0j}}$, and hence on $\Gamma$. The $j$-th event in \eqref{eq:gateset} implies
 \[
- |\Gamma|\le\sqrt n\,|a_{0j}|\alpha_\tau+\omega_\tau\sqrt{\Gamma^2+Q^2}\le\sqrt n\,|a_{0j}|\alpha_\tau+\omega_\tau|\Gamma|+\omega_\tau Q,
+ |\Gamma|\le\sqrt n\,|a_{0j}|\sigma_\tau+\omega_\tau\sqrt{\Gamma^2+V^2}\le\sqrt n\,|a_{0j}|\sigma_\tau+\omega_\tau|\Gamma|+\omega_\tau V,
 \]
-and since $\omega_\tau<1$ for $\tau\le1$, it is contained in $\{|\Gamma|\le(\sqrt n|a_{0j}|\alpha_\tau+\omega_\tau Q)/(1-\omega_\tau)\}$, whose right side is independent of $\Gamma$. The standard Gaussian density is at most $1/\sqrt{2\pi}$ and $\E|a_{0j}|=\sqrt{2/(\pi m)}$, so this event has probability at most
+and since $\omega_\tau<1$ for $\tau\le1$, it is contained in $\{|\Gamma|\le(\sqrt n|a_{0j}|\sigma_\tau+\omega_\tau V)/(1-\omega_\tau)\}$, whose right side is independent of $\Gamma$. The standard Gaussian density is at most $1/\sqrt{2\pi}$ and $\E|a_{0j}|=\sqrt{2/(\pi m)}$, so this event has probability at most
 \[
- \frac{(2/\pi)\sqrt{n/m}\,\alpha_\tau+\sqrt{2/\pi}\sqrt{n-1}\,\omega_\tau}{1-\omega_\tau}.
+ \frac{(2/\pi)\sqrt{n/m}\,\sigma_\tau+\sqrt{2/\pi}\sqrt{n-1}\,\omega_\tau}{1-\omega_\tau}.
 \]
-A union bound over the rows gives $\Pr(x\in\Bfr)\le B_{n,m}(\tau)$ for each fixed $x$, and averaging over a fixed marginal gives $\E D(\Bfr)\le B_{n,m}(\tau)$. The estimate is for a fixed $x$, which is why part~2 needs the marginal to be fixed in advance. For the simpler bound, $0\le\tau\le1$ gives $\sinh\tau\le6\tau/5$, $\cosh\tau-1\le5\tau^2/9$, and $2-\cosh\tau\ge4/9$; with $2/\pi<2/3$ and $\sqrt{2/\pi}<4/5$ this yields $B_{n,m}(\tau)\le2\sqrt{nm}\,\tau+m\sqrt n\,\tau^2$.
+A union bound over the rows gives $\Pr(x\in\Bfr)\le \beta_{n,m}(\tau)$ for each fixed $x$, and averaging over a fixed marginal gives $\E D(\Bfr)\le \beta_{n,m}(\tau)$. The estimate is for a fixed $x$, which is why part~2 needs the marginal to be fixed in advance. For the simpler bound, $0\le\tau\le1$ gives $\sinh\tau\le6\tau/5$, $\cosh\tau-1\le5\tau^2/9$, and $2-\cosh\tau\ge4/9$; with $2/\pi<2/3$ and $\sqrt{2/\pi}<4/5$ this yields $\beta_{n,m}(\tau)\le2\sqrt{nm}\,\tau+m\sqrt n\,\tau^2$.
 
 For part~3 fix $h$ and $D$. Pathwise, part~1 gives $\err_D(\sgn\ip C{\phi_{W_0}},h)\le\err_D(G,h)+D(\Bfr)$. The infimum over $u$ of $\err_D(\sgn\ip u{\phi_{W_0}},h)$ depends only on $W_0$ and is at most the error of every array $C$, whatever $a_0$ and the samples. Averaging gives
 \[
- \E_{W_0}\inf_u\err_D(\sgn\ip u{\phi_{W_0}},h)\le\Risk(h,D)+\E D(\Bfr)\le\eps+B_{n,m}(\tau).
+ \E_{W_0}\inf_u\err_D(\sgn\ip u{\phi_{W_0}},h)\le\Risk(h,D)+\E D(\Bfr)\le\eps+\beta_{n,m}(\tau).
 \]
-Finally, if $\eta\le1/m$ and $m\ge16n^2T^2/\delta^2$, then $\tau\le T\sqrt n/m\le\delta^2/(16n^{3/2}T)<1$ and $B_{n,m}(\tau)\le2nT/\sqrt m+n^{3/2}T^2/m\le\delta/2+\delta^2/(16\sqrt n)<\delta$.
+Finally, if $\eta\le1/m$ and $m\ge16n^2T^2/\delta^2$, then $\tau\le T\sqrt n/m\le\delta^2/(16n^{3/2}T)<1$ and $\beta_{n,m}(\tau)\le2nT/\sqrt m+n^{3/2}T^2/m\le\delta/2+\delta^2/(16\sqrt n)<\delta$.
 \end{proof}
 
 \end{document}
