@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""Reproducible diagnostics for ordinary_dimension.tex.
+"""Numerical checks of formulas used in paper/main.tex.
 
-The Fraction checks are exact arithmetic. NumPy calculations are finite
-floating-point checks of the proof's formulas, not an implementation theorem
-for exact real SGD and not evidence of distribution-free convergence.
+The constant checks use exact rational arithmetic. The trajectory, density, and
+Jacobian checks evaluate formulas from the proofs in floating point on small
+instances. They are not part of any argument in the paper.
 """
 from __future__ import annotations
 
@@ -238,7 +238,7 @@ def density_and_direction_checks() -> dict:
 
 def main() -> None:
     result = {"status": "all diagnostic assertions passed",
-              "interpretation": "Exact rational constant checks and finite floating-point diagnostics; no formal proof verification or learning experiment.",
+              "interpretation": "Exact rational checks of constants and floating-point checks of proof formulas on small instances.",
               "constants": constants(), "analytic_grids": analytic_grids(),
               "trajectories": trajectory_checks(),
               "density_and_direction": density_and_direction_checks()}

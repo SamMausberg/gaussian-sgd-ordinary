@@ -1,6 +1,6 @@
 {
   "status": "all diagnostic assertions passed",
-  "interpretation": "Exact rational constant checks and finite floating-point diagnostics; no formal proof verification or learning experiment.",
+  "interpretation": "Exact rational checks of constants and floating-point checks of proof formulas on small instances.",
   "constants": {
     "exact_fraction_checks": 11,
     "risk_loss_budget": "471/4096",
@@ -15,7 +15,7 @@
     "mgf_grid_points": 20001,
     "mgf_max_excess": 0.0,
     "logistic_grid_points": 20002,
-    "logistic_identity_residual": 1.1102230246251565e-16
+    "logistic_identity_residual": 2.220446049250313e-16
   },
   "trajectories": {
     "case_count": 18,
@@ -26,10 +26,10 @@
         "T": 64,
         "B": 0.5,
         "initialization": "balanced_cube",
-        "max_actual_frozen_score_difference": 4.884533803817953e-05,
+        "max_actual_frozen_score_difference": 4.8845338037777075e-05,
         "proved_score_bound": 0.7083333333333334,
-        "max_output_norm": 1.016032087271507,
-        "max_input_displacement": 8.643765500469793e-05,
+        "max_output_norm": 1.0160320872715063,
+        "max_input_displacement": 8.643765500469794e-05,
         "max_changed_gate_point_pairs": 0
       },
       {
@@ -38,10 +38,10 @@
         "T": 64,
         "B": 6.0,
         "initialization": "balanced_cube",
-        "max_actual_frozen_score_difference": 0.0005121544655628529,
+        "max_actual_frozen_score_difference": 0.000512154465563186,
         "proved_score_bound": 0.7083333333333334,
-        "max_output_norm": 1.016032087271507,
-        "max_input_displacement": 0.001010154780244413,
+        "max_output_norm": 1.0160320872715063,
+        "max_input_displacement": 0.0010101547802444145,
         "max_changed_gate_point_pairs": 0
       },
       {
@@ -52,8 +52,8 @@
         "initialization": "balanced_cube",
         "max_actual_frozen_score_difference": 0.0008144818741146198,
         "proved_score_bound": 0.7083333333333334,
-        "max_output_norm": 1.016032087271507,
-        "max_input_displacement": 0.0018382410702436696,
+        "max_output_norm": 1.0160320872715063,
+        "max_input_displacement": 0.00183824107024367,
         "max_changed_gate_point_pairs": 0
       },
       {
@@ -62,10 +62,10 @@
         "T": 64,
         "B": 0.5,
         "initialization": "gaussian",
-        "max_actual_frozen_score_difference": 5.2635796295497084e-05,
+        "max_actual_frozen_score_difference": 5.2635796295608106e-05,
         "proved_score_bound": 0.7083333333333334,
-        "max_output_norm": 1.0202771779193662,
-        "max_input_displacement": 7.734519707548314e-05,
+        "max_output_norm": 1.0202771779193658,
+        "max_input_displacement": 7.734519707548313e-05,
         "max_changed_gate_point_pairs": 0
       },
       {
@@ -74,10 +74,10 @@
         "T": 64,
         "B": 6.0,
         "initialization": "gaussian",
-        "max_actual_frozen_score_difference": 0.0006039609492108633,
+        "max_actual_frozen_score_difference": 0.0006039609492113629,
         "proved_score_bound": 0.7083333333333334,
-        "max_output_norm": 1.0206318629547118,
-        "max_input_displacement": 0.000920222016868343,
+        "max_output_norm": 1.0206318629547126,
+        "max_input_displacement": 0.0009202220168683437,
         "max_changed_gate_point_pairs": 0
       },
       {
@@ -86,10 +86,10 @@
         "T": 64,
         "B": 12.0,
         "initialization": "gaussian",
-        "max_actual_frozen_score_difference": 0.0008960303442593354,
+        "max_actual_frozen_score_difference": 0.0008960303442591133,
         "proved_score_bound": 0.7083333333333334,
-        "max_output_norm": 1.0214003403160095,
-        "max_input_displacement": 0.0015599933951723302,
+        "max_output_norm": 1.0214003403160092,
+        "max_input_displacement": 0.0015599933951723321,
         "max_changed_gate_point_pairs": 0
       },
       {
@@ -98,10 +98,10 @@
         "T": 64,
         "B": 0.5,
         "initialization": "balanced_cube",
-        "max_actual_frozen_score_difference": 5.525457568933412e-05,
+        "max_actual_frozen_score_difference": 5.5254575693552965e-05,
         "proved_score_bound": 0.7083333333333334,
-        "max_output_norm": 1.014991209948722,
-        "max_input_displacement": 6.493888353533179e-05,
+        "max_output_norm": 1.0149912099487233,
+        "max_input_displacement": 6.493888353533187e-05,
         "max_changed_gate_point_pairs": 0
       },
       {
@@ -110,10 +110,10 @@
         "T": 64,
         "B": 6.0,
         "initialization": "balanced_cube",
-        "max_actual_frozen_score_difference": 0.00061482813723579,
+        "max_actual_frozen_score_difference": 0.0006148281372351239,
         "proved_score_bound": 0.7083333333333334,
-        "max_output_norm": 1.0150269085959673,
-        "max_input_displacement": 0.0007656612778386774,
+        "max_output_norm": 1.0150269085959671,
+        "max_input_displacement": 0.0007656612778386766,
         "max_changed_gate_point_pairs": 0
       },
       {
@@ -122,9 +122,9 @@
         "T": 64,
         "B": 12.0,
         "initialization": "balanced_cube",
-        "max_actual_frozen_score_difference": 0.0012047875216631976,
+        "max_actual_frozen_score_difference": 0.0012047875216633086,
         "proved_score_bound": 0.7083333333333334,
-        "max_output_norm": 1.014991209948722,
+        "max_output_norm": 1.0149912099487233,
         "max_input_displacement": 0.0015133193499810092,
         "max_changed_gate_point_pairs": 0
       },
@@ -134,9 +134,9 @@
         "T": 64,
         "B": 0.5,
         "initialization": "gaussian",
-        "max_actual_frozen_score_difference": 3.845004402602825e-05,
+        "max_actual_frozen_score_difference": 3.845004402691643e-05,
         "proved_score_bound": 0.7083333333333334,
-        "max_output_norm": 1.016829182498189,
+        "max_output_norm": 1.0168291824981883,
         "max_input_displacement": 4.829236301848988e-05,
         "max_changed_gate_point_pairs": 0
       },
@@ -146,10 +146,10 @@
         "T": 64,
         "B": 6.0,
         "initialization": "gaussian",
-        "max_actual_frozen_score_difference": 0.0003644198007070054,
+        "max_actual_frozen_score_difference": 0.00036441980070717195,
         "proved_score_bound": 0.7083333333333334,
-        "max_output_norm": 1.0168257160798382,
-        "max_input_displacement": 0.0005960894779200021,
+        "max_output_norm": 1.0168257160798388,
+        "max_input_displacement": 0.0005960894779200015,
         "max_changed_gate_point_pairs": 0
       },
       {
@@ -158,10 +158,10 @@
         "T": 64,
         "B": 12.0,
         "initialization": "gaussian",
-        "max_actual_frozen_score_difference": 0.0007989556204731074,
+        "max_actual_frozen_score_difference": 0.0007989556204719972,
         "proved_score_bound": 0.7083333333333334,
-        "max_output_norm": 1.0168257160798382,
-        "max_input_displacement": 0.0011370240470021653,
+        "max_output_norm": 1.0168257160798388,
+        "max_input_displacement": 0.001137024047002165,
         "max_changed_gate_point_pairs": 0
       },
       {
@@ -170,10 +170,10 @@
         "T": 64,
         "B": 0.5,
         "initialization": "balanced_cube",
-        "max_actual_frozen_score_difference": 4.077696427723376e-05,
+        "max_actual_frozen_score_difference": 4.077696427667865e-05,
         "proved_score_bound": 0.7083333333333334,
-        "max_output_norm": 1.011326847439781,
-        "max_input_displacement": 4.001650527001095e-05,
+        "max_output_norm": 1.0113268474397823,
+        "max_input_displacement": 4.001650527001092e-05,
         "max_changed_gate_point_pairs": 9216
       },
       {
@@ -182,10 +182,10 @@
         "T": 64,
         "B": 6.0,
         "initialization": "balanced_cube",
-        "max_actual_frozen_score_difference": 0.00034567269960505964,
+        "max_actual_frozen_score_difference": 0.0003456726996033943,
         "proved_score_bound": 0.7083333333333334,
-        "max_output_norm": 1.0115039359701516,
-        "max_input_displacement": 0.00044485638585379443,
+        "max_output_norm": 1.0115039359701505,
+        "max_input_displacement": 0.0004448563858537938,
         "max_changed_gate_point_pairs": 9216
       },
       {
@@ -194,10 +194,10 @@
         "T": 64,
         "B": 12.0,
         "initialization": "balanced_cube",
-        "max_actual_frozen_score_difference": 0.0006140105756800018,
+        "max_actual_frozen_score_difference": 0.0006140105756792247,
         "proved_score_bound": 0.7083333333333334,
-        "max_output_norm": 1.0118090923262186,
-        "max_input_displacement": 0.0008604627108698846,
+        "max_output_norm": 1.0118090923262184,
+        "max_input_displacement": 0.0008604627108698878,
         "max_changed_gate_point_pairs": 9216
       },
       {
@@ -206,10 +206,10 @@
         "T": 64,
         "B": 0.5,
         "initialization": "gaussian",
-        "max_actual_frozen_score_difference": 5.238975819010783e-05,
+        "max_actual_frozen_score_difference": 5.238975818833147e-05,
         "proved_score_bound": 0.7083333333333334,
-        "max_output_norm": 1.0051343841921212,
-        "max_input_displacement": 4.844698188593155e-05,
+        "max_output_norm": 1.005134384192122,
+        "max_input_displacement": 4.844698188593153e-05,
         "max_changed_gate_point_pairs": 0
       },
       {
@@ -218,10 +218,10 @@
         "T": 64,
         "B": 6.0,
         "initialization": "gaussian",
-        "max_actual_frozen_score_difference": 0.0005272739498213275,
+        "max_actual_frozen_score_difference": 0.0005272739498206613,
         "proved_score_bound": 0.7083333333333334,
-        "max_output_norm": 1.0051332346285935,
-        "max_input_displacement": 0.0005908564902342966,
+        "max_output_norm": 1.005133234628594,
+        "max_input_displacement": 0.0005908564902342967,
         "max_changed_gate_point_pairs": 0
       },
       {
@@ -230,10 +230,10 @@
         "T": 64,
         "B": 12.0,
         "initialization": "gaussian",
-        "max_actual_frozen_score_difference": 0.0009479028900140074,
+        "max_actual_frozen_score_difference": 0.0009479028900132302,
         "proved_score_bound": 0.7083333333333334,
-        "max_output_norm": 1.0051332346285935,
-        "max_input_displacement": 0.0011134324120256913,
+        "max_output_norm": 1.005133234628594,
+        "max_input_displacement": 0.0011134324120256878,
         "max_changed_gate_point_pairs": 0
       }
     ],
@@ -241,10 +241,10 @@
   },
   "density_and_direction": {
     "case_count": 108,
-    "minimum_checked_directional_derivative": 0.49517558245536397,
+    "minimum_checked_directional_derivative": 0.495175582455364,
     "proved_directional_lower_bound": 0.10334966058846057,
-    "maximum_checked_log_density_ratio": 0.8002717916221274,
+    "maximum_checked_log_density_ratio": 0.8002717916221279,
     "proved_log_density_ratio_upper_bound": 0.9453781512605042,
-    "max_log_determinant_chain_residual": 4.884981308350689e-15
+    "max_log_determinant_chain_residual": 1.1976530878143876e-14
   }
 }
