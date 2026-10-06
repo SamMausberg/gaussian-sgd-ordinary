@@ -8,4 +8,6 @@ import GaussianSGD.Kernel
 import GaussianSGD.Geometry
 import GaussianSGD.Risk
 import GaussianSGD.Main
+import GaussianSGD.GateDefs
+import GaussianSGD.GateMass
 import GaussianSGD.GateRegime
