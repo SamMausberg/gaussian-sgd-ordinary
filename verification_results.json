@@ -1,0 +1,250 @@
+{
+  "status": "all diagnostic assertions passed",
+  "interpretation": "Exact rational constant checks and finite floating-point diagnostics; no formal proof verification or learning experiment.",
+  "constants": {
+    "exact_fraction_checks": 11,
+    "risk_loss_budget": "471/4096",
+    "available_budget": "1/8",
+    "density_log_ratio_bound": "225/238",
+    "score_coefficient_upper_bound": "534",
+    "stated_score_coefficient": 544,
+    "gaussian_small_ball_coefficient": 7.720243649178975,
+    "dominated_coefficient_upper_bound": 21.74625462767236
+  },
+  "analytic_grids": {
+    "mgf_grid_points": 20001,
+    "mgf_max_excess": 0.0,
+    "logistic_grid_points": 20002,
+    "logistic_identity_residual": 1.1102230246251565e-16
+  },
+  "trajectories": {
+    "case_count": 18,
+    "cases": [
+      {
+        "n": 2,
+        "m": 1536,
+        "T": 64,
+        "B": 0.5,
+        "initialization": "balanced_cube",
+        "max_actual_frozen_score_difference": 4.884533803817953e-05,
+        "proved_score_bound": 0.7083333333333334,
+        "max_output_norm": 1.016032087271507,
+        "max_input_displacement": 8.643765500469793e-05,
+        "max_changed_gate_point_pairs": 0
+      },
+      {
+        "n": 2,
+        "m": 1536,
+        "T": 64,
+        "B": 6.0,
+        "initialization": "balanced_cube",
+        "max_actual_frozen_score_difference": 0.0005121544655628529,
+        "proved_score_bound": 0.7083333333333334,
+        "max_output_norm": 1.016032087271507,
+        "max_input_displacement": 0.001010154780244413,
+        "max_changed_gate_point_pairs": 0
+      },
+      {
+        "n": 2,
+        "m": 1536,
+        "T": 64,
+        "B": 12.0,
+        "initialization": "balanced_cube",
+        "max_actual_frozen_score_difference": 0.0008144818741146198,
+        "proved_score_bound": 0.7083333333333334,
+        "max_output_norm": 1.016032087271507,
+        "max_input_displacement": 0.0018382410702436696,
+        "max_changed_gate_point_pairs": 0
+      },
+      {
+        "n": 2,
+        "m": 1536,
+        "T": 64,
+        "B": 0.5,
+        "initialization": "gaussian",
+        "max_actual_frozen_score_difference": 5.2635796295497084e-05,
+        "proved_score_bound": 0.7083333333333334,
+        "max_output_norm": 1.0202771779193662,
+        "max_input_displacement": 7.734519707548314e-05,
+        "max_changed_gate_point_pairs": 0
+      },
+      {
+        "n": 2,
+        "m": 1536,
+        "T": 64,
+        "B": 6.0,
+        "initialization": "gaussian",
+        "max_actual_frozen_score_difference": 0.0006039609492108633,
+        "proved_score_bound": 0.7083333333333334,
+        "max_output_norm": 1.0206318629547118,
+        "max_input_displacement": 0.000920222016868343,
+        "max_changed_gate_point_pairs": 0
+      },
+      {
+        "n": 2,
+        "m": 1536,
+        "T": 64,
+        "B": 12.0,
+        "initialization": "gaussian",
+        "max_actual_frozen_score_difference": 0.0008960303442593354,
+        "proved_score_bound": 0.7083333333333334,
+        "max_output_norm": 1.0214003403160095,
+        "max_input_displacement": 0.0015599933951723302,
+        "max_changed_gate_point_pairs": 0
+      },
+      {
+        "n": 3,
+        "m": 2304,
+        "T": 64,
+        "B": 0.5,
+        "initialization": "balanced_cube",
+        "max_actual_frozen_score_difference": 5.525457568933412e-05,
+        "proved_score_bound": 0.7083333333333334,
+        "max_output_norm": 1.014991209948722,
+        "max_input_displacement": 6.493888353533179e-05,
+        "max_changed_gate_point_pairs": 0
+      },
+      {
+        "n": 3,
+        "m": 2304,
+        "T": 64,
+        "B": 6.0,
+        "initialization": "balanced_cube",
+        "max_actual_frozen_score_difference": 0.00061482813723579,
+        "proved_score_bound": 0.7083333333333334,
+        "max_output_norm": 1.0150269085959673,
+        "max_input_displacement": 0.0007656612778386774,
+        "max_changed_gate_point_pairs": 0
+      },
+      {
+        "n": 3,
+        "m": 2304,
+        "T": 64,
+        "B": 12.0,
+        "initialization": "balanced_cube",
+        "max_actual_frozen_score_difference": 0.0012047875216631976,
+        "proved_score_bound": 0.7083333333333334,
+        "max_output_norm": 1.014991209948722,
+        "max_input_displacement": 0.0015133193499810092,
+        "max_changed_gate_point_pairs": 0
+      },
+      {
+        "n": 3,
+        "m": 2304,
+        "T": 64,
+        "B": 0.5,
+        "initialization": "gaussian",
+        "max_actual_frozen_score_difference": 3.845004402602825e-05,
+        "proved_score_bound": 0.7083333333333334,
+        "max_output_norm": 1.016829182498189,
+        "max_input_displacement": 4.829236301848988e-05,
+        "max_changed_gate_point_pairs": 0
+      },
+      {
+        "n": 3,
+        "m": 2304,
+        "T": 64,
+        "B": 6.0,
+        "initialization": "gaussian",
+        "max_actual_frozen_score_difference": 0.0003644198007070054,
+        "proved_score_bound": 0.7083333333333334,
+        "max_output_norm": 1.0168257160798382,
+        "max_input_displacement": 0.0005960894779200021,
+        "max_changed_gate_point_pairs": 0
+      },
+      {
+        "n": 3,
+        "m": 2304,
+        "T": 64,
+        "B": 12.0,
+        "initialization": "gaussian",
+        "max_actual_frozen_score_difference": 0.0007989556204731074,
+        "proved_score_bound": 0.7083333333333334,
+        "max_output_norm": 1.0168257160798382,
+        "max_input_displacement": 0.0011370240470021653,
+        "max_changed_gate_point_pairs": 0
+      },
+      {
+        "n": 4,
+        "m": 3072,
+        "T": 64,
+        "B": 0.5,
+        "initialization": "balanced_cube",
+        "max_actual_frozen_score_difference": 4.077696427723376e-05,
+        "proved_score_bound": 0.7083333333333334,
+        "max_output_norm": 1.011326847439781,
+        "max_input_displacement": 4.001650527001095e-05,
+        "max_changed_gate_point_pairs": 9216
+      },
+      {
+        "n": 4,
+        "m": 3072,
+        "T": 64,
+        "B": 6.0,
+        "initialization": "balanced_cube",
+        "max_actual_frozen_score_difference": 0.00034567269960505964,
+        "proved_score_bound": 0.7083333333333334,
+        "max_output_norm": 1.0115039359701516,
+        "max_input_displacement": 0.00044485638585379443,
+        "max_changed_gate_point_pairs": 9216
+      },
+      {
+        "n": 4,
+        "m": 3072,
+        "T": 64,
+        "B": 12.0,
+        "initialization": "balanced_cube",
+        "max_actual_frozen_score_difference": 0.0006140105756800018,
+        "proved_score_bound": 0.7083333333333334,
+        "max_output_norm": 1.0118090923262186,
+        "max_input_displacement": 0.0008604627108698846,
+        "max_changed_gate_point_pairs": 9216
+      },
+      {
+        "n": 4,
+        "m": 3072,
+        "T": 64,
+        "B": 0.5,
+        "initialization": "gaussian",
+        "max_actual_frozen_score_difference": 5.238975819010783e-05,
+        "proved_score_bound": 0.7083333333333334,
+        "max_output_norm": 1.0051343841921212,
+        "max_input_displacement": 4.844698188593155e-05,
+        "max_changed_gate_point_pairs": 0
+      },
+      {
+        "n": 4,
+        "m": 3072,
+        "T": 64,
+        "B": 6.0,
+        "initialization": "gaussian",
+        "max_actual_frozen_score_difference": 0.0005272739498213275,
+        "proved_score_bound": 0.7083333333333334,
+        "max_output_norm": 1.0051332346285935,
+        "max_input_displacement": 0.0005908564902342966,
+        "max_changed_gate_point_pairs": 0
+      },
+      {
+        "n": 4,
+        "m": 3072,
+        "T": 64,
+        "B": 12.0,
+        "initialization": "gaussian",
+        "max_actual_frozen_score_difference": 0.0009479028900140074,
+        "proved_score_bound": 0.7083333333333334,
+        "max_output_norm": 1.0051332346285935,
+        "max_input_displacement": 0.0011134324120256913,
+        "max_changed_gate_point_pairs": 0
+      }
+    ],
+    "scope": "Checks comparison lemmas at finite sizes; T is below the main theorem's conservative threshold."
+  },
+  "density_and_direction": {
+    "case_count": 108,
+    "minimum_checked_directional_derivative": 0.49517558245536397,
+    "proved_directional_lower_bound": 0.10334966058846057,
+    "maximum_checked_log_density_ratio": 0.8002717916221274,
+    "proved_log_density_ratio_upper_bound": 0.9453781512605042,
+    "max_log_determinant_chain_residual": 4.884981308350689e-15
+  }
+}
