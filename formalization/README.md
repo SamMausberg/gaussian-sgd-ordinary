@@ -55,6 +55,7 @@ no stronger. The same file defines the comparison objects of the proofs (`psi`, 
   chi-square tail bound are not formalized; the formal statements stop at the margin, the VC
   bound, and the Sauer–Shelah count.
 - The crossing proposition (`prop:crossings`).
+- The bound on `Pr_x[F(x) h(x) < 0]` stated after `thm:risk`.
 
 ## Proof routes that differ from the text
 
