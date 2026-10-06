@@ -1,6 +1,6 @@
 \documentclass[11pt,letterpaper,pmlr,twoside]{jmlr}
 \usepackage[T1]{fontenc}
-\usepackage{lmodern,microtype,mathtools,tikz,booktabs}
+\usepackage{lmodern,microtype,mathtools,tikz,booktabs,array}
 \usetikzlibrary{arrows.meta,positioning,calc}
 \hypersetup{hidelinks,pdftitle={Bounded-Time Logistic SGD Requires Gaussian ReLU Kernel Correlation}}
 \hypersetup{pdfauthor={Samuel Mausberg}}
@@ -50,7 +50,7 @@ The proof compares the trained network with simpler recurrences. Writing $b=\sqr
 
 Gates need not stay fixed in this regime. At width proportional to $n$, training on a point mass changes an unbounded number of gates at that point in the first step, with probability tending to one (Proposition~\ref{prop:crossings}). The score comparison tolerates these crossings because ReLU is Lipschitz. A different small-step regime, $\eta\le1/m$ with $m\ge16n^2T^2/\delta^2$, keeps every gate at a test point outside an initialization-defined set fixed along every training history. There the tail score is exactly linear in $mn$ gated-coordinate features, which gives the probabilistic-dimension bound of Section~\ref{sec:gate}. That regime allows effective time up to $T$ but yields only an approximate, randomized representation.
 
-The proofs of Theorems~\ref{thm:risk} and~\ref{thm:margin} are formalized in Lean~4 with Mathlib, starting from a definition of the exact process. Section~\ref{sec:lean} lists the formal statements and the parts that remain on paper.
+The proofs of Theorems~\ref{thm:risk}, \ref{thm:margin}, and~\ref{thm:gate} are formalized in Lean~4 with Mathlib, starting from a definition of the exact process. Section~\ref{sec:lean} lists the formal statements and the two parts that remain on paper, the final projection step of the dimension bound and the crossing proposition.
 
 \subsection{Related work}
 \paragraph{Kernel-regime analyses.} The relation between small parameter movement and fixed-feature behavior is central to lazy-training theory \citep{Chizat19}, and frozen-gate models that keep products of trained matrices appear in \citet[Section~6.2]{AllenZhu19}. Our score comparison belongs to this line. It uses the Lipschitz property of ReLU across gate boundaries and keeps the points at which gates change. \citet{JiT20} analyze logistic gradient descent and SGD with gated-coordinate features and Gaussian slab estimates; their output weights are fixed signs and they assume separability in the tangent feature space. \citet{Daniely17} proves conjugate-kernel learning guarantees with resources that depend on a comparator. These works derive learning from a kernel assumption. We argue in the opposite direction: the premise is the classification error that the process achieves, and the kernel margin is the conclusion.
@@ -281,7 +281,34 @@ The set $\Bfr$ depends only on the initialization and on $(n,m,T,\eta)$, and par
 
 \section{Formal verification}
 \label{sec:lean}
-FORMALIZATION-SECTION-PLACEHOLDER
+We formalized the proofs of Theorems~\ref{thm:risk}, \ref{thm:margin}, and~\ref{thm:gate} in Lean~4 \citep{Lean4} with Mathlib \citep{Mathlib}, with the two exceptions noted below. The development begins from definitions of the objects in Section~2. The network and the simultaneous update follow \eqref{eq:actual}, with derivative zero at a zero preactivation, and the classifier is the sign of the normalized tail score with $\sgn0=1$. Each hidden row has law $N(0,I_n/n)$ and the output layer has law $N(0,I_m/m)$, both obtained from Mathlib's standard Gaussian measure. A marginal is a probability vector on the cube, so every expectation over training samples or test points is a finite sum, and the risk is the Lebesgue integral over the initialization of the error averaged over histories drawn from $D^T$. Mathlib's Lebesgue integral is defined for every nonnegative function, so the statements need no measurability hypothesis on the conditional error. Table~\ref{tab:lean} lists the formal counterparts of the paper's statements. All of them compile without \lean{sorry}, and \lean{\#print axioms} reports only \lean{propext}, \lean{Classical.choice}, and \lean{Quot.sound} for each.
+
+\begin{table}[htbp]
+\centering\small
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.33\linewidth}>{\raggedright\arraybackslash}p{0.63\linewidth}@{}}
+\toprule
+Statement & Lean theorems (namespace \lean{GaussianSGD})\\
+\midrule
+Lemma~\ref{lem:init} & \lean{init\_hidden}, \lean{init\_output}\\
+Lemma~\ref{lem:score} & \lean{score\_comparison}, \lean{tail\_score\_comparison}\\
+Lemma~\ref{lem:population} & \lean{frozen\_sq\_error}, \lean{label\_effect}, \lean{tail\_sq\_error}, \lean{tail\_label\_effect}\\
+Lemma~\ref{lem:density} & \lean{density\_bound}\\
+Lemma~\ref{lem:smallball} & \lean{smallball}, \lean{null\_risk}\\
+Identity \eqref{eq:kernelidentity} & \lean{kernel\_identity}, \lean{kernelCorr\_eq\_norm}, \lean{Phi\_norm\_sq}\\
+Theorem~\ref{thm:risk} & \lean{risk\_lower\_bound}, \lean{lossTerm\_regime}, \lean{risk\_lower\_bound\_regime}\\
+Lemma~\ref{lem:geometry}, margin and growth & \lean{margin\_and\_vc}, \lean{growth\_bound}\\
+Theorem~\ref{thm:margin}, margin and VC & \lean{kernel\_margin}, \lean{lossTerm\_le\_half}, \lean{regime\_of\_large}\\
+Margin $1/(72B)$ for $\eps<1/4$ & \lean{kernel\_margin\_regime}\\
+Corollary~\ref{cor:parity} & \lean{parity\_lower\_bound}, \lean{kernelCorr\_parity\_sq\_le}\\
+Lemma~\ref{lem:rows} & \lean{row\_movement}\\
+Theorem~\ref{thm:gate} & \lean{exact\_representation}, \lean{gateSet\_mass}, \lean{gateBound\_le}, \lean{gate\_pdc}, \lean{gate\_small\_step}\\
+\bottomrule
+\end{tabular}
+\caption{Formal counterparts of the paper's statements. The file \lean{AxiomAudit.lean} prints the axioms of each.}
+\label{tab:lean}
+\end{table}
+
+Two parts of the paper are not formalized. The first is the dimension bound in Lemma~\ref{lem:geometry} and Theorem~\ref{thm:margin}: the Gaussian projection step, with its chi-square tail bound, is used on paper only, so the formal statements stop at the margin, the VC bound, and the Sauer--Shelah count. The second is Proposition~\ref{prop:crossings}, whose limit statement is not formalized. Some formal proofs take a different route from the text. Nonexpansivity of the logistic maps and the Jacobian estimates \eqref{eq:Jac} and \eqref{eq:derivative} are proved with secant slopes of $\tanh$ and of the logistic function, without derivatives. The first part of Lemma~\ref{lem:init} computes the moment generating function exactly and checks the two Chernoff exponents at $\theta=\pm1/512$ directly. The VC bound chooses the signs one at a time with the parallelogram law instead of averaging over random signs. Mathlib does not provide the density of the standard Gaussian measure on $\R^m$, so the formalization identifies it through characteristic functions before applying the change of variables formula in Lemma~\ref{lem:density}.
 
 \section{Scope}
 The main theorems hold at bounded effective time. The bound $B\le12$ is used in the density and anti-concentration lemmas, and the thresholds on $m$ and $T$ are sufficient conditions chosen to keep the proofs short; they do not locate a transition, and we have no result for $B$ growing with $n$. The score comparison allows many gate crossings, but the conclusion is a kernel-regime statement and gives no separation between feature learning and kernel methods. The representation in Theorem~\ref{thm:margin} is existential, since its last step is a random projection, and we give no efficient construction of the feature map. The accompanying numerical scripts check formulas used in the proofs and play no part in the arguments.
