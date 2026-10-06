@@ -41,6 +41,7 @@ import GaussianSGD
 -- Kernel margin from success under every marginal (`thm:margin`)
 #print axioms GaussianSGD.kernel_margin
 #print axioms GaussianSGD.lossTerm_le_half
+#print axioms GaussianSGD.regime_of_large
 #print axioms GaussianSGD.kernel_margin_regime
 -- Parity obstruction (`cor:parity`)
 #print axioms GaussianSGD.parity_lower_bound

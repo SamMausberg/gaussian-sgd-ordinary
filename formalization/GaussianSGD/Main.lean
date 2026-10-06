@@ -127,6 +127,28 @@ theorem lossTerm_le_half {n m T : ℕ} (hn : 1 ≤ n) {B θ : ℝ} (hB : 0 < B) 
   unfold lossTerm
   linarith
 
+/-- The conditions `m ≥ 2^17 n/θ` and `T ≥ (216B/θ)²` of `thm:margin` also give
+`m ≥ 576 n` and `γ = B/T ≤ 1/2`. -/
+theorem regime_of_large {n m T : ℕ} (hn : 1 ≤ n) (hT1 : 1 ≤ T) {B θ : ℝ} (hB : 0 < B)
+    (hθ0 : 0 < θ) (hθ : θ ≤ 1 / 2) (hm : 2 ^ 17 * (n : ℝ) / θ ≤ m)
+    (hT : (216 * B / θ) ^ 2 ≤ T) :
+    576 * n ≤ m ∧ B / T ≤ 1 / 2 := by
+  have hn' : (1 : ℝ) ≤ n := by exact_mod_cast hn
+  have hT' : (1 : ℝ) ≤ T := by exact_mod_cast hT1
+  refine ⟨?_, ?_⟩
+  · have h1 : (2 : ℝ) ^ 18 * n ≤ 2 ^ 17 * n / θ := by
+      rw [le_div_iff₀ hθ0]; nlinarith
+    have : (576 : ℝ) * n ≤ m := by nlinarith
+    exact_mod_cast this
+  · rw [div_le_iff₀ (by linarith)]
+    by_cases h2 : 2 * B ≤ 1
+    · linarith
+    · have h432 : 432 * B ≤ 216 * B / θ := by
+        rw [le_div_iff₀ hθ0]; nlinarith
+      have hsq : (432 * B) ^ 2 ≤ (216 * B / θ) ^ 2 :=
+        pow_le_pow_left₀ (by positivity) h432 2
+      nlinarith
+
 /-- The numerical instance: `m ≥ 2^20 n`, `T ≥ 2^24`, `B ≤ 12` give `Δ ≤ 471/4096 < 1/8`. -/
 theorem lossTerm_regime {n m T : ℕ} (hn : 1 ≤ n) {B : ℝ} (hB0 : 0 < B) (hB : B ≤ 12)
     (hm : 2 ^ 20 * n ≤ m) (hT : 2 ^ 24 ≤ T) :
