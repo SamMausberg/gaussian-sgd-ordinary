@@ -51,5 +51,6 @@ import GaussianSGD
 #print axioms GaussianSGD.exact_representation
 #print axioms GaussianSGD.gateSet_mass
 #print axioms GaussianSGD.gateBound_le
+#print axioms GaussianSGD.measurable_gate_inf
 #print axioms GaussianSGD.gate_pdc
 #print axioms GaussianSGD.gate_small_step

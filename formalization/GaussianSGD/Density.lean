@@ -97,12 +97,10 @@ end DensityAux
 open DensityAux
 
 /-- Density at the beginning of the tail (`lem:density`). -/
-theorem density_bound {n m T : ℕ} (hT : 1 ≤ T) {γ : ℝ} (hγ0 : 0 < γ) (hγ : γ ≤ 1 / 2)
+theorem density_bound {n m T : ℕ} {γ : ℝ} (hγ0 : 0 < γ) (hγ : γ ≤ 1 / 2)
     (hB : γ * T ≤ 12) (ψ : Cube n → Vec m) (hψ : ∀ x, ‖ψ x‖ ^ 2 ≤ 9 / 16) (D : Dist n) :
     (stdGaussian (Vec m)).map ((Rmap γ ψ D)^[(T + 1) / 2])
       ≤ ENNReal.ofReal (Real.exp 1) • stdGaussian (Vec m) := by
-  -- The bound holds for every `T`; the hypothesis `1 ≤ T` is not needed.
-  have _ := hT
   set s := (T + 1) / 2 with hsdef
   set a := 9 * γ / 64 with ha
   have hpos : 0 < 1 - a := by linarith

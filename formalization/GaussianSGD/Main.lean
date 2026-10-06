@@ -2,7 +2,7 @@ import GaussianSGD.Risk
 import GaussianSGD.Geometry
 
 /-!
-# Kernel margin from every marginal (`thm:margin`) and corollaries
+# Kernel margin from success under every marginal (`thm:margin`) and corollaries
 
 All-marginal success forces a Gaussian ReLU kernel margin and bounds the VC
 dimension. The section also records the explicit sufficient conditions on
@@ -46,7 +46,7 @@ lemma rhoW_le {n m : ℕ} (hn : 1 ≤ n) {y : ℝ} (hm : n * y ≤ m / 16384)
 
 end RiskAux
 
-/-- Kernel margin from every marginal (`thm:margin`): margin and VC parts. -/
+/-- Kernel margin from success under every marginal (`thm:margin`): margin and VC parts. -/
 theorem kernel_margin {n m T : ℕ} (hn : 1 ≤ n) (hm : 576 * n ≤ m) (hT : 1 ≤ T) {η : ℝ}
     (hη : 0 < η) (hB : η * m * T ≤ 12) (hγ : η * m ≤ 1 / 2) (H : Finset (Cube n → Bool))
     {ε : ℝ} (hε0 : 0 ≤ ε) (hε : ε < 1 / 2)
@@ -129,12 +129,14 @@ theorem lossTerm_le_half {n m T : ℕ} (hn : 1 ≤ n) {B θ : ℝ} (hB : 0 < B) 
 
 /-- The conditions `m ≥ 2^17 n/θ` and `T ≥ (216B/θ)²` of `thm:margin` also give
 `m ≥ 576 n` and `γ = B/T ≤ 1/2`. -/
-theorem regime_of_large {n m T : ℕ} (hn : 1 ≤ n) (hT1 : 1 ≤ T) {B θ : ℝ} (hB : 0 < B)
+theorem regime_of_large {n m T : ℕ} (hn : 1 ≤ n) {B θ : ℝ} (hB : 0 < B)
     (hθ0 : 0 < θ) (hθ : θ ≤ 1 / 2) (hm : 2 ^ 17 * (n : ℝ) / θ ≤ m)
     (hT : (216 * B / θ) ^ 2 ≤ T) :
     576 * n ≤ m ∧ B / T ≤ 1 / 2 := by
   have hn' : (1 : ℝ) ≤ n := by exact_mod_cast hn
-  have hT' : (1 : ℝ) ≤ T := by exact_mod_cast hT1
+  have hT' : (1 : ℝ) ≤ T := by
+    have hT0 : (0 : ℝ) < T := lt_of_lt_of_le (by positivity) hT
+    exact_mod_cast Nat.one_le_iff_ne_zero.mpr (by rintro rfl; simp at hT0)
   refine ⟨?_, ?_⟩
   · have h1 : (2 : ℝ) ^ 18 * n ≤ 2 ^ 17 * n / θ := by
       rw [le_div_iff₀ hθ0]; nlinarith

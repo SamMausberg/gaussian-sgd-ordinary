@@ -18,20 +18,55 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
 ALLOWED = {"propext", "Classical.choice", "Quot.sound"}
-FORBIDDEN = [r"\bsorry\b", r"\badmit\b", r"^\s*axiom\b", r"\bnative_decide\b",
-             r"\bimplemented_by\b", r"^\s*unsafe\b", r"@\[extern"]
+FORBIDDEN = [r"\bsorry\b", r"\badmit\b", r"\baxiom\b", r"\bnative_decide\b",
+             r"\bimplemented_by\b", r"\bunsafe\b", r"@\[extern"]
+
+
+def strip_comments(text: str) -> str:
+    """Remove Lean comments and keep every newline, so line numbers are preserved.
+
+    Block comments `/- ... -/` (including `/--` and `/-!`) nest. Line comments run from `--`
+    to the end of the line. String literals are copied unchanged.
+    """
+    out: list[str] = []
+    i, n, depth = 0, len(text), 0
+    while i < n:
+        if depth > 0:
+            if text.startswith("/-", i):
+                depth, i = depth + 1, i + 2
+            elif text.startswith("-/", i):
+                depth, i = depth - 1, i + 2
+            else:
+                if text[i] == "\n":
+                    out.append("\n")
+                i += 1
+        elif text.startswith("/-", i):
+            depth, i = 1, i + 2
+        elif text.startswith("--", i):
+            j = text.find("\n", i)
+            i = n if j < 0 else j
+        elif text[i] == '"':
+            j = i + 1
+            while j < n and text[j] != '"':
+                j += 2 if text[j] == "\\" else 1
+            out.append(text[i:j + 1])
+            i = j + 1
+        else:
+            out.append(text[i])
+            i += 1
+    return "".join(out)
 
 
 def scan() -> list[str]:
     hits = []
     for path in sorted((ROOT / "GaussianSGD").rglob("*.lean")) + [ROOT / "GaussianSGD.lean"]:
         text = path.read_text()
-        text = re.sub(r"/-.*?-/", "", text, flags=re.S)
-        for lineno, line in enumerate(text.splitlines(), 1):
-            code = line.split("--", 1)[0]
+        raw = text.splitlines()
+        code = strip_comments(text).splitlines()
+        for lineno, line in enumerate(code, 1):
             for pattern in FORBIDDEN:
-                if re.search(pattern, code):
-                    hits.append(f"{path.relative_to(ROOT)}:{lineno}: {line.strip()}")
+                if re.search(pattern, line):
+                    hits.append(f"{path.relative_to(ROOT)}:{lineno}: {raw[lineno - 1].strip()}")
     return hits
 
 
@@ -60,7 +95,6 @@ def main() -> int:
         "status": "passed" if ok else "failed",
         "forbidden_tokens": hits,
         "build_returncode": build.returncode,
-        "build_tail": build.stdout.strip().splitlines()[-3:],
         "audited_theorems": len(axioms),
         "listed_theorems": listed,
         "axioms": axioms,

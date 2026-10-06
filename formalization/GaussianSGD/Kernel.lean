@@ -41,11 +41,6 @@ private lemma Lp_norm_sq {α : Type*} [MeasurableSpace α] {μ : Measure α} (F 
   refine integral_congr_ae (ae_of_all _ fun a => ?_)
   simp
 
-private lemma integral_sq_gaussianReal : ∫ z, z ^ 2 ∂(gaussianReal 0 1) = 1 := by
-  have h := variance_fun_id_gaussianReal (μ := 0) (v := 1)
-  rw [variance_eq_integral measurable_id'.aemeasurable] at h
-  simpa using h
-
 private lemma integral_relu_sq_gaussianReal : ∫ z, relu z ^ 2 ∂(gaussianReal 0 1) = 1 / 2 := by
   have hint : Integrable (fun z => relu z ^ 2) (gaussianReal 0 1) :=
     (memLp_relu_gaussianReal 1).integrable_sq
@@ -104,34 +99,22 @@ theorem kernelCorr_eq_norm {n : ℕ} (h : Cube n → Bool) (D : Dist n) :
   filter_upwards [hF] with w hw
   rw [hw]
 
-/-- `‖μ‖² = m⁻¹ ∑_j (E_D h(x) ReLU⟪W_j, x⟫)²`. -/
-private lemma norm_mu_sq {n m : ℕ} (W : Fin m → Vec n) (h : Cube n → Bool) (D : Dist n) :
-    ‖mu (psi W) h D‖ ^ 2 =
-      (m : ℝ)⁻¹ * ∑ j, (∑ x, D.p x * bsign (h x) * relu ⟪W j, pt x⟫) ^ 2 := by
-  rw [EuclideanSpace.real_norm_sq_eq, Finset.mul_sum]
-  refine Finset.sum_congr rfl fun j _ => ?_
-  simp only [mu, psi, hid, WithLp.ofLp_sum, WithLp.ofLp_smul, Finset.sum_apply, Pi.smul_apply,
-    smul_eq_mul]
-  have : ∀ x, D.p x * bsign (h x) * ((Real.sqrt m)⁻¹ * relu ⟪W j, pt x⟫) =
-      (Real.sqrt m)⁻¹ * (D.p x * bsign (h x) * relu ⟪W j, pt x⟫) := fun x => by ring
-  simp_rw [this]
-  rw [← Finset.mul_sum, mul_pow, inv_pow, Real.sq_sqrt (Nat.cast_nonneg m)]
-
 private lemma integrable_row_sq {n m : ℕ} (c : Cube n → ℝ) (j : Fin m) :
     Integrable (fun W : Fin m → Vec n => (∑ x, c x * relu ⟪W j, pt x⟫) ^ 2) (hiddenLaw n m) :=
   integrable_comp_eval (μ := fun _ : Fin m => rowLaw n)
     (f := fun w : Vec n => (∑ x, c x * relu ⟪w, pt x⟫) ^ 2) (memLp_comb c).integrable_sq
 
-private lemma integrable_norm_mu_sq {n m : ℕ} (h : Cube n → Bool) (D : Dist n) :
+/-- `‖μ‖²` is integrable under the law of the hidden layer. -/
+lemma integrable_norm_mu_sq {n m : ℕ} (h : Cube n → Bool) (D : Dist n) :
     Integrable (fun W => ‖mu (psi W) h D‖ ^ 2) (hiddenLaw n m) := by
-  simp_rw [norm_mu_sq]
+  simp_rw [norm_mu_sq, corrFn]
   exact (integrable_finsetSum _ fun j _ => integrable_row_sq _ j).const_mul _
 
 /-- The initialization identity `E_{W₀} ‖μ‖² = A_D(h)²`. -/
-theorem kernel_identity {n m : ℕ} (_hn : 1 ≤ n) (hm : 1 ≤ m) (h : Cube n → Bool) (D : Dist n) :
+theorem kernel_identity {n m : ℕ} (hm : 1 ≤ m) (h : Cube n → Bool) (D : Dist n) :
     ∫ W, ‖mu (psi W) h D‖ ^ 2 ∂(hiddenLaw n m) = kernelCorr h D ^ 2 := by
   have hm' : (m : ℝ) ≠ 0 := by positivity
-  simp_rw [norm_mu_sq]
+  simp_rw [norm_mu_sq, corrFn]
   rw [integral_const_mul, integral_finsetSum _ fun j _ => integrable_row_sq _ j]
   have hrow : ∀ j : Fin m, ∫ W, (∑ x, D.p x * bsign (h x) * relu ⟪W j, pt x⟫) ^ 2 ∂(hiddenLaw n m)
       = ∫ w, (∑ x, D.p x * bsign (h x) * relu ⟪w, pt x⟫) ^ 2 ∂(rowLaw n) := fun j =>
@@ -145,7 +128,8 @@ theorem kernel_identity {n m : ℕ} (_hn : 1 ≤ n) (hm : 1 ≤ m) (h : Cube n �
 
 theorem integrable_norm_mu {n m : ℕ} (h : Cube n → Bool) (D : Dist n) :
     Integrable (fun W => ‖mu (psi W) h D‖) (hiddenLaw n m) := by
-  have hmeas : AEStronglyMeasurable (fun W : Fin m → Vec n => ‖mu (psi W) h D‖) (hiddenLaw n m) := by
+  have hmeas :
+      AEStronglyMeasurable (fun W : Fin m → Vec n => ‖mu (psi W) h D‖) (hiddenLaw n m) := by
     have hc : Continuous fun W : Fin m → Vec n => mu (psi W) h D := by
       have := InitAux.continuous_relu
       unfold mu psi hid

@@ -1,4 +1,4 @@
-import GaussianSGD.Defs
+import GaussianSGD.Basic
 
 /-!
 # Initialization bounds (`lem:init`)
@@ -23,10 +23,6 @@ instance isProbabilityMeasure_outLaw (m : ℕ) : IsProbabilityMeasure (outLaw m)
 namespace InitAux
 
 lemma continuous_relu : Continuous relu := continuous_id.max continuous_const
-
-lemma norm_pt_sq {n : ℕ} (x : Cube n) : ‖pt x‖ ^ 2 = n := by
-  rw [EuclideanSpace.real_norm_sq_eq]
-  simp [pt, bsign]
 
 /-- The law of `⟪w, v⟫` for `w ∼ N(0, I_n/n)` is `N(0, ‖v‖²/n)`. -/
 lemma rowLaw_map_inner {n : ℕ} (v : Vec n) :

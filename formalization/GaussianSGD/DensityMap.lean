@@ -1,4 +1,4 @@
-import GaussianSGD.Defs
+import GaussianSGD.Basic
 
 /-!
 # The label-symmetric map `R`
@@ -14,18 +14,6 @@ open scoped RealInnerProductSpace
 open MeasureTheory
 
 namespace GaussianSGD.DensityAux
-
-/-- The derivative of `tanh` is `sech²`. -/
-lemma hasDerivAt_tanh (x : ℝ) : HasDerivAt Real.tanh ((Real.cosh x ^ 2)⁻¹) x := by
-  have h := (Real.hasDerivAt_sinh x).div (Real.hasDerivAt_cosh x) (Real.cosh_pos x).ne'
-  have e : (Real.sinh / Real.cosh) = Real.tanh := by
-    funext y; rw [Pi.div_apply, Real.tanh_eq_sinh_div_cosh]
-  rw [e] at h
-  convert h using 1
-  have := Real.cosh_sq_sub_sinh_sq x
-  have hc := (Real.cosh_pos x).ne'
-  field_simp
-  linarith
 
 lemma tanh_monotone : Monotone Real.tanh :=
   monotone_of_deriv_nonneg (fun x => (hasDerivAt_tanh x).differentiableAt)
@@ -58,8 +46,8 @@ variable {n m : ℕ} {γ : ℝ} {ψ : Cube n → Vec m} {D : Dist n}
 lemma norm_psi_le (hψ : ∀ x, ‖ψ x‖ ^ 2 ≤ 9 / 16) (x : Cube n) : ‖ψ x‖ ≤ 3 / 4 := by
   nlinarith [hψ x, norm_nonneg (ψ x)]
 
-/-- The map `R` does not increase norms. Since `R 0 = 0`, this is the case `w = 0` of the
-nonexpansiveness of `R`. -/
+/-- The map `R` does not increase norms: `‖R v‖ ≤ ‖v‖`. The proof uses
+`tanh(u)² ≤ u tanh(u)` and `‖ψ(x)‖ ≤ 3/4`. -/
 lemma norm_Rmap_le (hγ0 : 0 ≤ γ) (hγ : γ ≤ 1 / 2) (hψ : ∀ x, ‖ψ x‖ ^ 2 ≤ 9 / 16)
     (v : Vec m) : ‖Rmap γ ψ D v‖ ≤ ‖v‖ := by
   set u : Cube n → ℝ := fun x => ⟪v, ψ x⟫ / 2 with hu

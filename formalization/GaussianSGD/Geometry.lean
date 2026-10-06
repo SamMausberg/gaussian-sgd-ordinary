@@ -1,7 +1,9 @@
 import GaussianSGD.Defs
 
 /-!
-# Convex separation and the VC bound (`lem:geometry`)
+# Convex separation and ordinary dimension (`lem:geometry`)
+
+The margin and VC parts (`margin_and_vc`) and the growth part (`growth_bound`).
 -/
 
 noncomputable section
@@ -128,8 +130,9 @@ theorem margin_and_vc {K : Type*} [NormedAddCommGroup K] [InnerProductSpace ℝ 
     rw [le_div_iff₀ (by positivity)]
     nlinarith
 
-/-- Convex separation and ordinary dimension (`lem:geometry`), growth part: a class all of whose shattered sets have at most `v`
-points has at most `∑_{i ≤ v} (M choose i)` members, `M = |X|`. -/
+/-- Convex separation and ordinary dimension (`lem:geometry`), growth part: a class all of whose
+shattered sets have at most `v` points has at most `∑_{i ≤ v} (M choose i)` members,
+`M = |X|`. -/
 theorem growth_bound {X : Type*} [Fintype X] [DecidableEq X] (H : Finset (X → Bool)) (v : ℕ)
     (hv : ∀ S : Finset X, Shatters H S → S.card ≤ v) :
     H.card ≤ ∑ i ∈ Finset.range (v + 1), (Fintype.card X).choose i := by

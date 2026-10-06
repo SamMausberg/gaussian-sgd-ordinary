@@ -1,4 +1,5 @@
 import GaussianSGD.Defs
+import GaussianSGD.Basic
 import GaussianSGD.Comparison
 import GaussianSGD.Population
 import GaussianSGD.Density

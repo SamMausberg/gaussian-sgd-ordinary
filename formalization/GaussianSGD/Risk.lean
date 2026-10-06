@@ -19,9 +19,9 @@ namespace GaussianSGD
 
 namespace RiskAux
 
-/-- Pathwise step in the proof of Risk controlled by kernel correlation (`thm:risk`): when
-`‖a₀‖ ≤ 2` and `b₀ = √m a₀`, the conditional error is at least the error of `sgn Z_D(·; b₀)`
-minus the disagreement bounds at the test points. -/
+/-- Pathwise step in the proof of `thm:risk`: when `‖a₀‖ ≤ 2` and `b₀ = √m a₀`, the conditional
+error is at least the error of `sgn Z_D(·; b₀)` minus the disagreement bounds at the test
+points. -/
 theorem condErr_ge_of_norm_le {n m T : ℕ} (hn : 1 ≤ n) (hm : 576 * n ≤ m) (hT : 1 ≤ T) {η : ℝ}
     (hη : 0 < η) (hB : η * m * T ≤ 12) (hγ : η * m ≤ 1 / 2) (W : Fin m → Vec n) (hG : Good W)
     (h : Cube n → Bool) (D : Dist n) (b : Vec m) (ha : ‖(Real.sqrt m)⁻¹ • b‖ ≤ 2) :
@@ -106,20 +106,8 @@ theorem condErr_ge_of_norm_le {n m T : ℕ} (hn : 1 ≤ n) (hm : 576 * n ≤ m) 
         exact err_ge D (G s) S h
     _ = condErr η T (W, a) h D := rfl
 
-lemma memLp_corrFn {n : ℕ} (h : Cube n → Bool) (D : Dist n) :
-    MemLp (corrFn h D) 2 (rowLaw n) := by
-  unfold corrFn
-  exact memLp_finsetSum _ fun x _ => (memLp_relu_inner x).const_mul _
-
-lemma integrable_norm_mu_sq {n m : ℕ} (h : Cube n → Bool) (D : Dist n) :
-    Integrable (fun W => ‖mu (psi W) h D‖ ^ 2) (hiddenLaw n m) := by
-  simp_rw [norm_mu_sq]
-  refine integrable_finsetSum _ fun j _ => Integrable.const_mul ?_ _
-  exact (measurePreserving_eval (fun _ : Fin m => rowLaw n) j).integrable_comp_of_integrable
-    (memLp_corrFn h D).integrable_sq
-
 /-- `E_{W₀} ‖μ‖ ≤ A_D(h)`, by Jensen's inequality and `E_{W₀} ‖μ‖² = A_D(h)²`. -/
-lemma integral_norm_mu_le {n m : ℕ} (hn : 1 ≤ n) (hm : 1 ≤ m) (h : Cube n → Bool)
+lemma integral_norm_mu_le {n m : ℕ} (hm : 1 ≤ m) (h : Cube n → Bool)
     (D : Dist n) : ∫ W, ‖mu (psi W) h D‖ ∂(hiddenLaw n m) ≤ kernelCorr h D := by
   have hX : MemLp (fun W => ‖mu (psi W) h D‖) 2 (hiddenLaw n m) :=
     (memLp_two_iff_integrable_sq (integrable_norm_mu h D).aestronglyMeasurable).2
@@ -127,7 +115,7 @@ lemma integral_norm_mu_le {n m : ℕ} (hn : 1 ≤ n) (hm : 1 ≤ m) (h : Cube n 
   have h1 := variance_nonneg (fun W => ‖mu (psi W) h D‖) (hiddenLaw n m)
   rw [variance_eq_sub hX] at h1
   have h2 : ∫ W, ((fun W => ‖mu (psi W) h D‖) ^ 2) W ∂(hiddenLaw n m) = kernelCorr h D ^ 2 :=
-    kernel_identity hn hm h D
+    kernel_identity hm h D
   refine le_of_pow_le_pow_left₀ two_ne_zero (Real.sqrt_nonneg _) ?_
   rw [← h2]; linarith
 
@@ -149,7 +137,7 @@ theorem cond_risk_lower {n m T : ℕ} (hn : 1 ≤ n) (hm : 576 * n ≤ m) (hT : 
   have hd0 : 0 ≤ d := by rw [hd]; unfold kappa; positivity
   have hσ0 : 0 ≤ σ := by positivity
   set Z : Cube n → Vec m → ℝ := fun x b => Zsym (η * m) (psi W) D T x b with hZ
-  have hZm : ∀ x, Measurable (Z x) := fun x => (RiskAux.continuous_Zsym _ _ _ _ x).measurable
+  have hZm : ∀ x, Measurable (Z x) := fun x => (continuous_Zsym _ _ _ _ x).measurable
   set bad : Set (Vec m) := {b | 2 < ‖(Real.sqrt m)⁻¹ • b‖} with hbad_def
   have hbad : MeasurableSet bad :=
     measurableSet_lt measurable_const (measurable_const_smul _).norm
@@ -169,7 +157,7 @@ theorem cond_risk_lower {n m T : ℕ} (hn : 1 ≤ n) (hm : 576 * n ≤ m) (hT : 
   have hint1 : Integrable (fun b => err D (fun x => sgn (Z x b)) h) (stdGaussian (Vec m)) := by
     refine Integrable.of_bound (RiskAux.measurable_err_comp D h hZm).aestronglyMeasurable 1
       (ae_of_all _ fun b => ?_)
-    rw [Real.norm_eq_abs, abs_of_nonneg (RiskAux.err_nonneg _ _ _)]
+    rw [Real.norm_eq_abs, abs_of_nonneg (err_nonneg _ _ _)]
     exact RiskAux.err_le_one _ _ _
   have hint2 : ∀ x, Integrable (fun b => RiskAux.disBound d σ (Z x b)) (stdGaussian (Vec m)) := by
     intro x
@@ -194,11 +182,11 @@ theorem cond_risk_lower {n m T : ℕ} (hn : 1 ≤ n) (hm : 576 * n ≤ m) (hT : 
     rw [integral_sub hint12 hint3, integral_sub hint1 hint23,
       integral_finsetSum _ fun x _ => (hint2 x).const_mul _, integral_indicator_one hbad]
     simp only [hZ, integral_const_mul]
-    rw [null_risk hT hγ0 hγ hB (psi W) hG D h]
+    rw [null_risk hγ0 hγ hB (psi W) hG D h]
   have hdis : ∀ x,
       ∫ b, RiskAux.disBound d σ (Z x b) ∂(stdGaussian (Vec m)) ≤ 24 * d + 2 * (24 * σ) :=
     fun x => RiskAux.integral_disBound_le _ (hZm x) (by norm_num) hd0 hσ0
-      (fun r hr => smallball hT hγ0 hγ hB (psi W) hG D x hr)
+      (fun r hr => smallball hγ0 hγ hB (psi W) hG D x hr)
   have hbadle : (stdGaussian (Vec m)).real bad ≤ rhoA m := by
     rw [Measure.real, hbad_def, RiskAux.stdGaussian_norm_gt]
     exact ENNReal.toReal_le_of_le_ofReal (by unfold rhoA; positivity) (init_output m)
@@ -259,7 +247,7 @@ theorem risk_lower_bound {n m T : ℕ} (hn : 1 ≤ n) (hm : 576 * n ≤ m) (hT :
   have hPG1 : (hiddenLaw n m).real G ≤ 1 := measureReal_le_one
   have hmuG : ∫ W in G, ‖mu (psi W) h D‖ ∂(hiddenLaw n m) ≤ kernelCorr h D :=
     (setIntegral_le_integral hmu (ae_of_all _ fun W => norm_nonneg _)).trans
-      (RiskAux.integral_norm_mu_le hn hm1 h D)
+      (RiskAux.integral_norm_mu_le hm1 h D)
   calc ENNReal.ofReal (1 / 2 - lossTerm n m T (η * m * T) - 9 * (η * m * T) * kernelCorr h D)
       ≤ ENNReal.ofReal (∫ W, f W ∂(hiddenLaw n m)) := by
         refine ENNReal.ofReal_le_ofReal ?_

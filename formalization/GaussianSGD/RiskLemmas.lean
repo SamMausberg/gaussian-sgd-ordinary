@@ -1,11 +1,11 @@
-import GaussianSGD.Defs
+import GaussianSGD.Basic
 
 /-!
 # Auxiliary lemmas for the risk bound
 
-Measurability and continuity of the comparison objects, the layer-cake bound behind the
-estimate `24 d + 48 σ` in the proof of Risk controlled by kernel correlation (`thm:risk`),
-the pathwise disagreement bound, and the change of variables `b₀ = √m a₀`.
+Continuity of `ψ` and measurability of the good event, the layer-cake bound behind the estimate
+`24 d + 48 σ` in the proof of `thm:risk`, the pathwise disagreement bound, and the change of
+variables `b₀ = √m a₀`.
 -/
 
 noncomputable section
@@ -14,25 +14,6 @@ open scoped RealInnerProductSpace
 open MeasureTheory ProbabilityTheory Set
 
 namespace GaussianSGD.RiskAux
-
-theorem continuous_tanh : Continuous Real.tanh := by
-  have : Real.tanh = fun x => Real.sinh x / Real.cosh x := by
-    funext x; exact Real.tanh_eq_sinh_div_cosh x
-  rw [this]
-  exact Real.continuous_sinh.div Real.continuous_cosh (fun x => (Real.cosh_pos x).ne')
-
-theorem continuous_Rmap {n m : ℕ} (γ : ℝ) (ψ : Cube n → Vec m) (D : Dist n) :
-    Continuous (Rmap γ ψ D) := by
-  unfold Rmap
-  have := continuous_tanh
-  fun_prop
-
-theorem continuous_Zsym {n m : ℕ} (γ : ℝ) (ψ : Cube n → Vec m) (D : Dist n) (T : ℕ)
-    (x : Cube n) : Continuous (fun b => Zsym γ ψ D T x b) := by
-  unfold Zsym tailAvg
-  have h := continuous_Rmap γ ψ D
-  have : ∀ t, Continuous ((Rmap γ ψ D)^[t]) := fun t => h.iterate t
-  fun_prop
 
 lemma continuous_psi {n m : ℕ} (x : Cube n) : Continuous (fun W : Fin m → Vec n => psi W x) := by
   unfold psi hid relu
@@ -150,14 +131,6 @@ lemma abs_le_abs_sub_of_sgn_ne {F Z : ℝ} (h : sgn F ≠ sgn Z) : |Z| ≤ |F - 
   · rw [abs_of_nonneg h2, abs_of_nonpos (by linarith)]; linarith
   · exact absurd rfl h
 
-lemma histWeight_nonneg {n T : ℕ} (D : Dist n) (s : Fin T → Cube n) : 0 ≤ histWeight D s :=
-  Finset.prod_nonneg fun i _ => D.nonneg (s i)
-
-lemma sum_histWeight {n T : ℕ} (D : Dist n) : ∑ s : Fin T → Cube n, histWeight D s = 1 := by
-  unfold histWeight
-  rw [← Fintype.prod_sum (fun (_ : Fin T) x => D.p x)]
-  simp [D.sum_one]
-
 /-- If `|F_i - Z| ≤ d + |E_i|` for every `i` and `∑ w_i E_i² ≤ σ²`, the `w`-probability
 that `sgn F_i ≠ sgn Z` is at most `disBound d σ Z`. -/
 lemma sum_disagree_le {ι : Type*} (s : Finset ι) {w F E : ι → ℝ} {Z d σ : ℝ}
@@ -201,13 +174,6 @@ lemma err_ge {n : ℕ} (D : Dist n) (G S : Cube n → ℝ) (h : Cube n → Bool)
 lemma labels_pm {n : ℕ} (h : Cube n → Bool) (xs : ℕ → Cube n) (t : ℕ) :
     labels h xs t = 1 ∨ labels h xs t = -1 := by
   unfold labels bsign; split_ifs <;> simp
-
-lemma measurable_sgn : Measurable sgn := by
-  unfold sgn
-  exact Measurable.ite measurableSet_Ici measurable_const measurable_const
-
-lemma err_nonneg {n : ℕ} (D : Dist n) (G : Cube n → ℝ) (h : Cube n → Bool) : 0 ≤ err D G h :=
-  Finset.sum_nonneg fun x _ => mul_nonneg (D.nonneg x) (by split_ifs <;> norm_num)
 
 lemma err_le_one {n : ℕ} (D : Dist n) (G : Cube n → ℝ) (h : Cube n → Bool) : err D G h ≤ 1 := by
   refine le_of_le_of_eq (Finset.sum_le_sum fun x _ => ?_) D.sum_one
@@ -259,22 +225,5 @@ lemma stdGaussian_norm_gt {m : ℕ} :
   rw [Measure.map_apply (measurable_const_smul _) (measurableSet_lt measurable_const
     measurable_norm)]
   rfl
-
-/-- The label-weighted ReLU feature average `E_D h(x) ReLU⟪w, x⟫`. -/
-def corrFn {n : ℕ} (h : Cube n → Bool) (D : Dist n) (w : Vec n) : ℝ :=
-  ∑ x, D.p x * bsign (h x) * relu ⟪w, pt x⟫
-
-lemma mu_apply {n m : ℕ} (W : Fin m → Vec n) (h : Cube n → Bool) (D : Dist n) (j : Fin m) :
-    mu (psi W) h D j = (Real.sqrt m)⁻¹ * corrFn h D (W j) := by
-  simp only [mu, psi, hid, corrFn, Finset.mul_sum]
-  simp
-  exact Finset.sum_congr rfl fun x _ => by ring
-
-lemma norm_mu_sq {n m : ℕ} (W : Fin m → Vec n) (h : Cube n → Bool) (D : Dist n) :
-    ‖mu (psi W) h D‖ ^ 2 = ∑ j, (m : ℝ)⁻¹ * corrFn h D (W j) ^ 2 := by
-  rw [EuclideanSpace.norm_sq_eq]
-  refine Finset.sum_congr rfl fun j _ => ?_
-  rw [Real.norm_eq_abs, sq_abs, mu_apply, mul_pow, inv_pow, Real.sq_sqrt (Nat.cast_nonneg m)]
-
 
 end GaussianSGD.RiskAux

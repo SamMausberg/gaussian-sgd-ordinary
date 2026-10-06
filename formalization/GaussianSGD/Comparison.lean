@@ -1,4 +1,4 @@
-import GaussianSGD.Defs
+import GaussianSGD.Basic
 
 /-!
 # Score comparison through gate changes (`lem:score`)
@@ -17,19 +17,6 @@ open scoped RealInnerProductSpace
 open Finset
 
 namespace GaussianSGD
-
-private lemma cmp_norm_pt_sq {n : ℕ} (x : Cube n) : ‖pt x‖ ^ 2 = n := by
-  rw [EuclideanSpace.norm_sq_eq]
-  simp [pt, bsign]
-
-private lemma cmp_norm_pt {n : ℕ} (x : Cube n) : ‖pt x‖ = Real.sqrt n := by
-  rw [← cmp_norm_pt_sq x, Real.sqrt_sq (norm_nonneg _)]
-
-private lemma cmp_abs_g_le_one {y : ℝ} (hy : |y| ≤ 1) (z : ℝ) : |g y z| ≤ 1 := by
-  unfold g
-  rw [abs_div, abs_of_pos (by positivity : (0:ℝ) < 1 + Real.exp (y * z)),
-    div_le_one (by positivity)]
-  linarith [Real.exp_pos (y * z)]
 
 private lemma cmp_g_one (z : ℝ) : g 1 z = (1 + Real.exp z)⁻¹ := by simp [g]
 
@@ -139,7 +126,7 @@ private lemma cmp_hid_sub_le {n m : ℕ} (W W0 : Fin m → Vec n) (x : Cube n) :
     simp only [hid, PiLp.sub_apply, Real.norm_eq_abs, sq_abs]
     have h1 := cmp_relu_lip ⟪W j, pt x⟫ ⟪W0 j, pt x⟫
     have h2 : |⟪W j, pt x⟫ - ⟪W0 j, pt x⟫| ≤ ‖W j - W0 j‖ * Real.sqrt n := by
-      rw [← inner_sub_left, ← cmp_norm_pt x]; exact abs_real_inner_le_norm _ _
+      rw [← inner_sub_left, ← norm_pt x]; exact abs_real_inner_le_norm _ _
     have h3 : (relu ⟪W j, pt x⟫ - relu ⟪W0 j, pt x⟫) ^ 2 ≤ (‖W j - W0 j‖ * Real.sqrt n) ^ 2 :=
       sq_le_sq' (by linarith [neg_abs_le (relu ⟪W j, pt x⟫ - relu ⟪W0 j, pt x⟫)])
         (by linarith [le_abs_self (relu ⟪W j, pt x⟫ - relu ⟪W0 j, pt x⟫)])
@@ -210,7 +197,7 @@ private lemma cmp_movement {n m T : ℕ} (hn : 1 ≤ n) (hm : 576 * n ≤ m) {η
       nlinarith
     set θ := traj η θ0 xs ys t with hθ
     set c := g (ys t) (score θ (xs t))
-    have hc : |c| ≤ 1 := cmp_abs_g_le_one (hys t) _
+    have hc : |c| ≤ 1 := abs_g_le_one (hys t) _
     rw [cmp_traj_succ, ← hθ]
     constructor
     · have hhid : ‖hid θ.1 (xs t)‖ ≤
@@ -251,7 +238,7 @@ private lemma cmp_movement {n m T : ℕ} (hn : 1 ≤ n) (hm : 576 * n ≤ m) {η
               ‖(η * c * θ.2 j * (if 0 < ⟪θ.1 j, pt (xs t)⟫ then 1 else 0)) • pt (xs t)‖ ^ 2
                 ≤ η ^ 2 * n * θ.2 j ^ 2 := by
             intro j
-            rw [norm_smul, mul_pow, cmp_norm_pt_sq, Real.norm_eq_abs, sq_abs]
+            rw [norm_smul, mul_pow, norm_pt_sq, Real.norm_eq_abs, sq_abs]
             have hi : (if 0 < ⟪θ.1 j, pt (xs t)⟫ then (1 : ℝ) else 0) ^ 2 ≤ 1 := by
               split_ifs <;> norm_num
             have hc2 : c ^ 2 ≤ 1 := by
@@ -409,7 +396,7 @@ private lemma cmp_frozen_gap {n m T : ℕ} (hn : 1 ≤ n) (hm : 576 * n ≤ m) {
       cmp_sample_nonexp hγ0 p (by nlinarith [hψ (xs t)]) (hys t) b u
     have hcc : |c - c'| ≤ 16 * (η * T) * n / 4 :=
       (cmp_g_lip (hys t) _ _).trans (by linarith)
-    have hc : |c| ≤ 1 := cmp_abs_g_le_one (hys' t) _
+    have hc : |c| ≤ 1 := abs_g_le_one (hys' t) _
     have hres2 : ‖γ • ((c - c') • p + c • (q - p))‖ ≤ γ * K := by
       rw [norm_smul, Real.norm_eq_abs, abs_of_nonneg hγ0]
       refine mul_le_mul_of_nonneg_left ?_ hγ0

@@ -2,13 +2,8 @@
   "status": "passed",
   "forbidden_tokens": [],
   "build_returncode": 0,
-  "build_tail": [
-    "\u2714 [8924/8926] Built GaussianSGD.Main (9.5s)",
-    "\u2714 [8925/8926] Built GaussianSGD (4.4s)",
-    "Build completed successfully (8926 jobs)."
-  ],
-  "audited_theorems": 40,
-  "listed_theorems": 40,
+  "audited_theorems": 41,
+  "listed_theorems": 41,
   "axioms": {
     "GaussianSGD.init_hidden": [
       "Classical.choice",
@@ -196,6 +191,11 @@
       "propext"
     ],
     "GaussianSGD.gateBound_le": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "GaussianSGD.measurable_gate_inf": [
       "Classical.choice",
       "Quot.sound",
       "propext"

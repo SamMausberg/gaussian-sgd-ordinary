@@ -19,28 +19,14 @@ open MeasureTheory ProbabilityTheory
 
 namespace GaussianSGD
 
-private lemma gr_norm_pt_sq {n : ℕ} (x : Cube n) : ‖pt x‖ ^ 2 = n := by
-  rw [EuclideanSpace.norm_sq_eq]
-  simp [pt, bsign]
-
-private lemma gr_norm_pt {n : ℕ} (x : Cube n) : ‖pt x‖ = Real.sqrt n := by
-  rw [← gr_norm_pt_sq x, Real.sqrt_sq (norm_nonneg _)]
-
-private lemma gr_abs_g_le_one {y : ℝ} (hy : |y| ≤ 1) (z : ℝ) : |g y z| ≤ 1 := by
-  unfold g
-  rw [abs_div, abs_of_pos (by positivity : (0:ℝ) < 1 + Real.exp (y * z))]
-  rw [div_le_one (by positivity)]
-  linarith [Real.exp_pos (y * z)]
-
 private lemma gr_abs_relu_inner_le {n : ℕ} (w : Vec n) (x : Cube n) :
     |relu ⟪w, pt x⟫| ≤ ‖w‖ * Real.sqrt n := by
-  rw [← gr_norm_pt x]
+  rw [← norm_pt x]
   refine le_trans ?_ (abs_real_inner_le_norm w (pt x))
   unfold relu
   rcases le_total ⟪w, pt x⟫ 0 with h | h
   · rw [max_eq_right h]; simp
   · rw [max_eq_left h]
-
 
 private lemma gr_traj_succ_snd {n m : ℕ} (η : ℝ) (θ0 : Params n m) (xs : ℕ → Cube n) (ys : ℕ → ℝ)
     (t : ℕ) (j : Fin m) :
@@ -77,7 +63,7 @@ theorem row_movement {n m : ℕ} {η : ℝ} (hη : 0 ≤ η) (θ0 : Params n m) 
     set a := (traj η θ0 xs ys t).2 j
     set w := (traj η θ0 xs ys t).1 j
     set c := g (ys t) (score (traj η θ0 xs ys t) (xs t))
-    have hc : |c| ≤ 1 := gr_abs_g_le_one (hys t) _
+    have hc : |c| ≤ 1 := abs_g_le_one (hys t) _
     have htl : 0 ≤ (t : ℝ) * l := mul_nonneg (Nat.cast_nonneg _) hl0
     have hs0 : 0 ≤ Real.sinh (t * l) := Real.sinh_nonneg_iff.mpr htl
     have hc0 : 0 ≤ Real.cosh (t * l) := (Real.cosh_pos _).le
@@ -107,7 +93,7 @@ theorem row_movement {n m : ℕ} {η : ℝ} (hη : 0 ≤ η) (θ0 : Params n m) 
       nlinarith
     · rw [gr_traj_succ_fst]
       have h1 : ‖(η * c * a * (if 0 < ⟪w, pt (xs t)⟫ then 1 else 0)) • pt (xs t)‖ ≤ l * |a| := by
-        rw [norm_smul, gr_norm_pt, Real.norm_eq_abs, abs_mul, abs_mul, abs_mul, abs_of_nonneg hη,
+        rw [norm_smul, norm_pt, Real.norm_eq_abs, abs_mul, abs_mul, abs_mul, abs_of_nonneg hη,
           hl]
         have hi : |(if 0 < ⟪w, pt (xs t)⟫ then (1:ℝ) else 0)| ≤ 1 := by split_ifs <;> simp
         calc η * |c| * |a| * |(if 0 < ⟪w, pt (xs t)⟫ then (1:ℝ) else 0)| * Real.sqrt n
@@ -122,7 +108,6 @@ theorem row_movement {n m : ℕ} {η : ℝ} (hη : 0 ≤ η) (θ0 : Params n m) 
       have h3 : l * |a| ≤ l * (|θ0.2 j| * Real.cosh (t * l) + ‖θ0.1 j‖ * Real.sinh (t * l)) :=
         mul_le_mul_of_nonneg_left iha hl0
       nlinarith
-
 
 private lemma gr_inner_euc {ι : Type*} [Fintype ι] (u v : EuclideanSpace ℝ ι) :
     ⟪u, v⟫ = ∑ i, u i * v i := by
@@ -159,7 +144,7 @@ theorem gates_fixed {n m : ℕ} {η : ℝ} (hη : 0 ≤ η) {T : ℕ} (θ0 : Par
   have hdiff : |⟪(traj η θ0 xs ys t).1 j - θ0.1 j, pt x⟫| ≤
       Real.sqrt n * gateRadius (η * T * Real.sqrt n) θ0 j := by
     refine (abs_real_inner_le_norm _ _).trans ?_
-    rw [gr_norm_pt, mul_comm]
+    rw [norm_pt, mul_comm]
     refine mul_le_mul_of_nonneg_left (hmove.trans ?_) hsq
     unfold gateRadius
     gcongr
@@ -180,41 +165,16 @@ private lemma gr_relu_eq_gate {n m : ℕ} {η : ℝ} (hη : 0 ≤ η) {T : ℕ} 
     (hx : x ∉ gateSet (η * T * Real.sqrt n) θ0) {t : ℕ} (ht : t ≤ T) (j : Fin m) :
     relu ⟪(traj η θ0 xs ys t).1 j, pt x⟫ =
       (if 0 < ⟪θ0.1 j, pt x⟫ then 1 else 0) * ⟪(traj η θ0 xs ys t).1 j, pt x⟫ := by
-  simp only [gateSet, Set.mem_ofPred_eq, not_exists, not_le] at hx
-  have hxj := hx j
-  have hsq : 0 ≤ Real.sqrt n := Real.sqrt_nonneg _
-  have hτ : (t : ℝ) * η * Real.sqrt n ≤ η * T * Real.sqrt n := by
-    have : (t : ℝ) ≤ T := by exact_mod_cast ht
-    nlinarith [mul_nonneg hη hsq]
-  have hτ0 : 0 ≤ (t : ℝ) * η * Real.sqrt n := by positivity
-  have hsinh : Real.sinh (t * η * Real.sqrt n) ≤ Real.sinh (η * T * Real.sqrt n) :=
-    Real.sinh_le_sinh.mpr hτ
-  have hcosh : Real.cosh (t * η * Real.sqrt n) ≤ Real.cosh (η * T * Real.sqrt n) := by
-    rw [Real.cosh_le_cosh, abs_of_nonneg hτ0, abs_of_nonneg (hτ0.trans hτ)]
-    exact hτ
-  have hmove := (row_movement hη θ0 xs ys hys j t).2
-  have hdiff : |⟪(traj η θ0 xs ys t).1 j - θ0.1 j, pt x⟫| ≤
-      Real.sqrt n * gateRadius (η * T * Real.sqrt n) θ0 j := by
-    refine (abs_real_inner_le_norm _ _).trans ?_
-    rw [gr_norm_pt, mul_comm]
-    refine mul_le_mul_of_nonneg_left (hmove.trans ?_) hsq
-    unfold gateRadius
-    gcongr
-  rw [inner_sub_left] at hdiff
-  have hlt := lt_of_le_of_lt hdiff hxj
+  obtain ⟨h0, hsign⟩ := gates_fixed hη θ0 xs ys hys x hx ht j
   unfold relu
-  rcases lt_trichotomy ⟪θ0.1 j, pt x⟫ 0 with h | h | h
-  · rw [ite_eq_right (not_lt.mpr h.le), zero_mul, max_eq_right]
-    rw [abs_of_neg h] at hlt
-    linarith [(abs_lt.mp hlt).2]
-  · rw [h, abs_zero] at hlt
-    exact absurd hlt (not_lt.mpr (abs_nonneg _))
-  · rw [ite_eq_left h, one_mul, max_eq_left]
-    rw [abs_of_pos h] at hlt
-    linarith [(abs_lt.mp hlt).1]
+  rcases h0.lt_or_gt with h | h
+  · rw [sign_neg h, sign_eq_neg_one_iff] at hsign
+    rw [ite_eq_right (not_lt.mpr h.le), zero_mul, max_eq_right hsign.le]
+  · rw [sign_pos h, sign_eq_one_iff] at hsign
+    rw [ite_eq_left h, one_mul, max_eq_left hsign.le]
 
-/-- Fixed-gate regime (`thm:gate`), exact representation: outside `𝔅`, for every labeled history, the
-tail score equals `⟪C, φ_{W₀}(x)⟫`. -/
+/-- Fixed-gate regime (`thm:gate`), exact representation: outside `𝔅`, for every labeled history,
+the tail score equals `⟪C, φ_{W₀}(x)⟫`. -/
 theorem exact_representation {n m : ℕ} {η : ℝ} (hη : 0 ≤ η) (T : ℕ) (θ0 : Params n m)
     (xs : ℕ → Cube n) (ys : ℕ → ℝ) (hys : ∀ t, |ys t| ≤ 1) (x : Cube n)
     (hx : x ∉ gateSet (η * T * Real.sqrt n) θ0) :
@@ -239,8 +199,6 @@ theorem exact_representation {n m : ℕ} {η : ℝ} (hη : 0 ≤ η) (T : ℕ) (
   simp only [Finset.mul_sum, Finset.sum_mul]
   refine Finset.sum_congr rfl fun t _ => ?_
   ring
-
-
 
 private lemma gr_cosh_lt_two {τ : ℝ} (hτ0 : 0 ≤ τ) (hτ : τ ≤ 1) : Real.cosh τ < 2 := by
   have h1 : Real.cosh τ ≤ Real.exp (1 / 2) := (Real.cosh_le_exp_half_sq τ).trans
@@ -278,16 +236,6 @@ private lemma gr_measurable_mass {n m : ℕ} (τ : ℝ) (D : Dist n) :
   exact measurable_const.mul (measurable_one.indicator
     (MeasurableSet.iUnion fun j => gr_measurableSet_row τ x j))
 
-private lemma gr_err_nonneg {n : ℕ} (D : Dist n) (G : Cube n → ℝ) (h : Cube n → Bool) :
-    0 ≤ err D G h :=
-  Finset.sum_nonneg fun x _ => mul_nonneg (D.nonneg x) (by split_ifs <;> norm_num)
-
-private lemma gr_sum_histWeight {n : ℕ} (D : Dist n) (T : ℕ) :
-    ∑ s : Fin T → Cube n, histWeight D s = 1 := by
-  unfold histWeight
-  rw [← Fintype.piFinset_univ, ← Finset.prod_univ_sum]
-  simp [D.sum_one]
-
 /-- Pathwise error transfer in the fixed-gate regime:
 `err_D(sign⟪C, φ⟫, h) ≤ err_D(sign F, h) + D(𝔅)`. -/
 private lemma gr_err_le {n m : ℕ} {η : ℝ} (hη : 0 ≤ η) (T : ℕ) (θ0 : Params n m)
@@ -318,24 +266,22 @@ private lemma gr_inf_le {n m : ℕ} {η : ℝ} (hη : 0 ≤ η) (T : ℕ) (W : F
         ∑ x, D.p x * (gateSet (η * T * Real.sqrt n) (W, a)).indicator 1 x := by
   have hbdd : BddBelow (Set.range fun u : EuclideanSpace ℝ (Fin m × Fin n) =>
       err D (fun x => sgn ⟪u, gateFeat W x⟫) h) :=
-    ⟨0, by rintro _ ⟨u, rfl⟩; exact gr_err_nonneg _ _ _⟩
-  have hw : ∀ s : Fin T → Cube n, 0 ≤ histWeight D s :=
-    fun s => Finset.prod_nonneg fun i _ => D.nonneg _
+    ⟨0, by rintro _ ⟨u, rfl⟩; exact err_nonneg _ _ _⟩
   have hlab : ∀ s : Fin T → Cube n, ∀ t, |labels h (ext s) t| ≤ 1 := by
     intro s t; unfold labels bsign; split_ifs <;> norm_num
   set I := ⨅ u : EuclideanSpace ℝ (Fin m × Fin n), err D (fun x => sgn ⟪u, gateFeat W x⟫) h
   set M := ∑ x, D.p x * (gateSet (η * T * Real.sqrt n) (W, a)).indicator 1 x
   calc I = ∑ s : Fin T → Cube n, histWeight D s * I := by
-        rw [← Finset.sum_mul, gr_sum_histWeight, one_mul]
+        rw [← Finset.sum_mul, sum_histWeight, one_mul]
     _ ≤ ∑ s : Fin T → Cube n, histWeight D s *
           (err D (fun x => sgn (tailScore η T (W, a) (ext s) (labels h (ext s)) x)) h + M) := by
-        refine Finset.sum_le_sum fun s _ => mul_le_mul_of_nonneg_left ?_ (hw s)
+        refine Finset.sum_le_sum fun s _ => mul_le_mul_of_nonneg_left ?_ (histWeight_nonneg D s)
         exact (ciInf_le hbdd (gateCoeff η T (W, a) (ext s) (labels h (ext s)))).trans
           (gr_err_le hη T (W, a) (ext s) (labels h (ext s)) (hlab s) D h)
     _ = condErr η T (W, a) h D + M := by
         rw [condErr]
         simp_rw [mul_add]
-        rw [Finset.sum_add_distrib, ← Finset.sum_mul, gr_sum_histWeight, one_mul]
+        rw [Finset.sum_add_distrib, ← Finset.sum_mul, sum_histWeight, one_mul]
 
 /-- The point mass at `x₀`. -/
 private def gr_point {n : ℕ} (x0 : Cube n) : Dist n where
@@ -424,8 +370,7 @@ private lemma gr_risk_pos {n m : ℕ} (η : ℝ) (T : ℕ) (h : Cube n → Bool)
           (W, a) (ext s0) (labels h (ext s0)) x)) h := by rw [hw0, he0, one_mul]
       _ ≤ _ := Finset.single_le_sum (f := fun s => histWeight (gr_point x0) s *
           err (gr_point x0) (fun x => sgn (tailScore η T (W, a) (ext s) (labels h (ext s)) x)) h)
-          (fun s _ => mul_nonneg (Finset.prod_nonneg fun i _ => (gr_point x0).nonneg _)
-            (gr_err_nonneg _ _ _)) (Finset.mem_univ s0)
+          (fun s _ => mul_nonneg (histWeight_nonneg _ s) (err_nonneg _ _ _)) (Finset.mem_univ s0)
   intro h0
   apply hSpos
   refine le_antisymm ?_ zero_le
@@ -439,8 +384,36 @@ private lemma gr_risk_pos {n m : ℕ} (η : ℝ) (T : ℕ) (h : Cube n → Bool)
           rw [← ENNReal.ofReal_one]; exact ENNReal.ofReal_le_ofReal (hcond W hW a)
   · rw [Set.indicator_of_notMem hW]; exact zero_le
 
-/-- Fixed-gate regime (`thm:gate`), probabilistic dimension: if the process learns every target in `H` to
-expected error `ε` under every marginal and `τ = η T √n ≤ 1`, the law of `φ_{W₀}`
+/-- The gate pattern `x ↦ j ↦ 1{0 < ⟪w₀ⱼ, x⟫}` of a hidden layer. -/
+private def gr_pattern {n m : ℕ} (W : Fin m → Vec n) : Cube n → Fin m → Bool :=
+  fun x j => decide (0 < ⟪W j, pt x⟫)
+
+private lemma gr_measurable_pattern {n m : ℕ} : Measurable (gr_pattern (n := n) (m := m)) := by
+  refine measurable_pi_iff.mpr fun x => measurable_pi_iff.mpr fun j => measurable_to_bool ?_
+  have : (fun W : Fin m → Vec n => gr_pattern W x j) ⁻¹' {true} = {W | 0 < ⟪W j, pt x⟫} := by
+    ext W; simp [gr_pattern]
+  rw [this]
+  exact measurableSet_lt measurable_const (by fun_prop)
+
+/-- Fixed-gate regime (`thm:gate`): the best error of a gated-coordinate classifier,
+`inf_u err_D(sign⟪u, φ_{W₀}⟫, h)`, is a measurable function of `W₀`. It depends on `W₀` only
+through the finitely many gate indicators `1{0 < ⟪w₀ⱼ, x⟫}`. -/
+theorem measurable_gate_inf {n m : ℕ} (D : Dist n) (h : Cube n → Bool) :
+    Measurable fun W : Fin m → Vec n =>
+      ⨅ u : EuclideanSpace ℝ (Fin m × Fin n), err D (fun x => sgn ⟪u, gateFeat W x⟫) h := by
+  set F : (Cube n → Fin m → Bool) → ℝ := fun σ =>
+    ⨅ u : EuclideanSpace ℝ (Fin m × Fin n), err D (fun x => sgn ⟪u,
+      WithLp.toLp 2 (fun p : Fin m × Fin n => bsign (x p.2) * if σ x p.1 then 1 else 0)⟫) h
+  have heq : (fun W : Fin m → Vec n =>
+      ⨅ u : EuclideanSpace ℝ (Fin m × Fin n), err D (fun x => sgn ⟪u, gateFeat W x⟫) h) =
+      F ∘ gr_pattern := by
+    funext W
+    simp only [Function.comp, F, gr_pattern, gateFeat, decide_eq_true_eq]
+  rw [heq]
+  exact (measurable_of_finite F).comp gr_measurable_pattern
+
+/-- Fixed-gate regime (`thm:gate`), probabilistic dimension: if the process learns every target in
+`H` to expected error `ε` under every marginal and `τ = η T √n ≤ 1`, the law of `φ_{W₀}`
 witnesses `pdc_{ε + B_{n,m}(τ)}(H) ≤ mn`. -/
 theorem gate_pdc {n m T : ℕ} (hn : 1 ≤ n) {η : ℝ} (hη : 0 ≤ η)
     (hτ : η * T * Real.sqrt n ≤ 1) (H : Finset (Cube n → Bool)) {ε : ℝ}
@@ -484,7 +457,7 @@ theorem gate_pdc {n m T : ℕ} (hn : 1 ≤ n) {η : ℝ} (hη : 0 ≤ η)
         rw [ENNReal.ofReal_eq_zero]
         have hbdd : BddBelow (Set.range fun u : EuclideanSpace ℝ (Fin m × Fin n) =>
             err D (fun x => sgn ⟪u, gateFeat W x⟫) h) :=
-          ⟨0, by rintro _ ⟨u, rfl⟩; exact gr_err_nonneg _ _ _⟩
+          ⟨0, by rintro _ ⟨u, rfl⟩; exact err_nonneg _ _ _⟩
         refine (ciInf_le hbdd 0).trans (le_of_eq ?_)
         simp [err, sgn, hall, bsign]
       simp [h0]

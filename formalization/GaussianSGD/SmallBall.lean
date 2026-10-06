@@ -18,18 +18,6 @@ namespace GaussianSGD
 
 namespace SmallBall
 
-theorem continuous_Rmap {n m : ℕ} (γ : ℝ) (ψ : Cube n → Vec m) (D : Dist n) :
-    Continuous (Rmap γ ψ D) := by
-  have := Population.continuous_tanh
-  unfold Rmap
-  fun_prop
-
-theorem continuous_Zsym {n m : ℕ} (γ : ℝ) (ψ : Cube n → Vec m) (D : Dist n) (T : ℕ)
-    (x : Cube n) : Continuous (Zsym γ ψ D T x) := by
-  have := fun t : ℕ => (continuous_Rmap γ ψ D).iterate t
-  unfold Zsym tailAvg
-  fun_prop
-
 /-- The symmetric tail score as a function of the state at the start of the tail. -/
 def Ztail {n m : ℕ} (γ : ℝ) (ψ : Cube n → Vec m) (D : Dist n) (T : ℕ) (x : Cube n)
     (v : Vec m) : ℝ :=
@@ -229,17 +217,12 @@ theorem sgn_ne_neg_one (z : ℝ) : sgn z ≠ -1 ↔ ¬z < 0 := by
   · simp only [not_lt, hz, iff_true]; norm_num
   · simp only [not_le] at hz; simp [hz]
 
-theorem measurable_sgn : Measurable sgn := by
-  unfold sgn
-  exact Measurable.ite (measurableSet_le measurable_const measurable_id) measurable_const
-    measurable_const
-
 end SmallBall
 
 open SmallBall
 
 /-- Anti-concentration of the symmetric tail (`lem:smallball`), small-ball bound. -/
-theorem smallball {n m T : ℕ} (hT : 1 ≤ T) {γ : ℝ} (hγ0 : 0 < γ) (hγ : γ ≤ 1 / 2)
+theorem smallball {n m T : ℕ} {γ : ℝ} (hγ0 : 0 < γ) (hγ : γ ≤ 1 / 2)
     (hB : γ * T ≤ 12) (ψ : Cube n → Vec m)
     (hψ : ∀ x, 7 / 16 ≤ ‖ψ x‖ ^ 2 ∧ ‖ψ x‖ ^ 2 ≤ 9 / 16) (D : Dist n) (x : Cube n)
     {r : ℝ} (hr : 0 ≤ r) :
@@ -282,7 +265,7 @@ theorem smallball {n m T : ℕ} (hT : 1 ≤ T) {γ : ℝ} (hγ0 : 0 < γ) (hγ :
     ext b
     simp only [Set.mem_ofPred_eq, Set.mem_preimage, hS_def, Zsym_eq_Ztail]
   rw [hset, ← Measure.map_apply hR hS]
-  have hdens := density_bound hT hγ0 hγ hB ψ hψ' D
+  have hdens := density_bound hγ0 hγ hB ψ hψ' D
   calc (stdGaussian (Vec m)).map ((Rmap γ ψ D)^[(T + 1) / 2]) S
       ≤ (ENNReal.ofReal (Real.exp 1) • stdGaussian (Vec m)) S := Measure.le_iff'.mp hdens S
     _ = ENNReal.ofReal (Real.exp 1) * stdGaussian (Vec m) S := by
@@ -294,7 +277,7 @@ theorem smallball {n m T : ℕ} (hT : 1 ≤ T) {γ : ℝ} (hγ0 : 0 < γ) (hγ :
 
 /-- Anti-concentration of the symmetric tail (`lem:smallball`): the symmetric classifier
 has expected error exactly `1/2`. -/
-theorem null_risk {n m T : ℕ} (hT : 1 ≤ T) {γ : ℝ} (hγ0 : 0 < γ) (hγ : γ ≤ 1 / 2)
+theorem null_risk {n m T : ℕ} {γ : ℝ} (hγ0 : 0 < γ) (hγ : γ ≤ 1 / 2)
     (hB : γ * T ≤ 12) (ψ : Cube n → Vec m)
     (hψ : ∀ x, 7 / 16 ≤ ‖ψ x‖ ^ 2 ∧ ‖ψ x‖ ^ 2 ≤ 9 / 16) (D : Dist n) (h : Cube n → Bool) :
     ∫ b, err D (fun x => sgn (Zsym γ ψ D T x b)) h ∂(stdGaussian (Vec m)) = 1 / 2 := by
@@ -321,7 +304,7 @@ theorem null_risk {n m T : ℕ} (hT : 1 ≤ T) {γ : ℝ} (hγ0 : 0 < γ) (hγ :
       refine le_antisymm ?_ bot_le
       calc μ {b | Z b = 0} ≤ μ {b | |Z b| ≤ 0} :=
             measure_mono fun b hb => by simp only [Set.mem_ofPred_eq] at hb ⊢; rw [hb, abs_zero]
-        _ ≤ ENNReal.ofReal (24 * 0) := smallball hT hγ0 hγ hB ψ hψ D x le_rfl
+        _ ≤ ENNReal.ofReal (24 * 0) := smallball hγ0 hγ hB ψ hψ D x le_rfl
         _ = 0 := by simp
     have hcompl : μ Aᶜ = μ A := by
       apply le_antisymm

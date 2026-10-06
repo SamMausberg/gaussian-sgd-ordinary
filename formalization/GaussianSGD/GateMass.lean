@@ -83,12 +83,6 @@ lemma integral_abs_gaussianReal : ∫ z, |z| ∂(gaussianReal 0 1) = Real.sqrt (
   field_simp
   nlinarith
 
-/-- `E Z² = 1` for `Z ∼ N(0,1)`. -/
-lemma integral_sq_gaussianReal : ∫ z, z ^ 2 ∂(gaussianReal 0 1) = 1 := by
-  have h := variance_fun_id_gaussianReal (μ := 0) (v := 1)
-  rw [variance_eq_integral measurable_id'.aemeasurable] at h
-  simpa using h
-
 /-- `E ‖ξ‖ ≤ √k` for a standard Gaussian vector `ξ` in `ℝ^k`. -/
 lemma lintegral_sqrt_sum_sq_le (k : ℕ) :
     ∫⁻ w, ENNReal.ofReal (Real.sqrt (∑ j, w j ^ 2)) ∂(Measure.pi fun _ : Fin k => gaussianReal 0 1)
@@ -107,7 +101,8 @@ lemma lintegral_sqrt_sum_sq_le (k : ℕ) :
     intro S hS0
     rw [le_div_iff₀ (by positivity)]
     nlinarith [sq_nonneg (Real.sqrt S - Real.sqrt k), Real.sq_sqrt hS0, Real.sq_sqrt hk'.le]
-  calc ∫⁻ w, ENNReal.ofReal (Real.sqrt (∑ j, w j ^ 2)) ∂(Measure.pi fun _ : Fin k => gaussianReal 0 1)
+  calc ∫⁻ w, ENNReal.ofReal (Real.sqrt (∑ j, w j ^ 2))
+        ∂(Measure.pi fun _ : Fin k => gaussianReal 0 1)
       ≤ ∫⁻ w, ENNReal.ofReal ((∑ j, w j ^ 2 + k) / (2 * Real.sqrt k))
           ∂(Measure.pi fun _ : Fin k => gaussianReal 0 1) :=
         lintegral_mono fun w => ENNReal.ofReal_le_ofReal
@@ -123,8 +118,8 @@ lemma lintegral_sqrt_sum_sq_le (k : ℕ) :
           integral_finsetSum _ fun j _ => hint j]
         have hj : ∀ j : Fin k, ∫ w, w j ^ 2 ∂(Measure.pi fun _ : Fin k => gaussianReal 0 1) = 1 :=
           fun j => by
-            rw [integral_comp_eval (μ := fun _ : Fin k => gaussianReal 0 1) (f := fun z : ℝ => z ^ 2)
-              (by fun_prop), integral_sq_gaussianReal]
+            rw [integral_comp_eval (μ := fun _ : Fin k => gaussianReal 0 1)
+              (f := fun z : ℝ => z ^ 2) (by fun_prop), integral_sq_gaussianReal]
         simp only [hj, Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul, mul_one,
           probReal_univ, smul_eq_mul, one_mul]
         have := Real.mul_self_sqrt hk'.le
@@ -161,7 +156,8 @@ lemma stdGaussian_cone_le {k : ℕ} (e : Vec (k + 1)) (he : ‖e‖ = 1) {c β :
       simp only [Real.norm_eq_abs, sq_abs, hρ, Fin.sum_univ_succ]
       have hB : 0 ≤ ∑ j : Fin k, ξ j.succ ^ 2 := Finset.sum_nonneg fun j _ => sq_nonneg _
       refine Real.sqrt_le_iff.2 ⟨by positivity, ?_⟩
-      nlinarith [Real.sq_sqrt hB, sq_abs (ξ 0), abs_nonneg (ξ 0), Real.sqrt_nonneg (∑ j : Fin k, ξ j.succ ^ 2)]
+      nlinarith [Real.sq_sqrt hB, sq_abs (ξ 0), abs_nonneg (ξ 0),
+        Real.sqrt_nonneg (∑ j : Fin k, ξ j.succ ^ 2)]
     simp only [hg]
     rw [le_div_iff₀ (by linarith)]
     have : |ξ 0| ≤ c + β * (|ξ 0| + ρ (fun j => ξ j.succ)) :=
@@ -205,7 +201,8 @@ lemma stdGaussian_cone_le {k : ℕ} (e : Vec (k + 1)) (he : ‖e‖ = 1) {c β :
         gcongr
         exact lintegral_sqrt_sum_sq_le k
     _ = ENNReal.ofReal (Real.sqrt (2 / Real.pi) * (c + β * Real.sqrt k) / (1 - β)) := by
-        rw [← ENNReal.ofReal_mul hK1, ← ENNReal.ofReal_add hK0 (mul_nonneg hK1 (Real.sqrt_nonneg _))]
+        rw [← ENNReal.ofReal_mul hK1,
+          ← ENNReal.ofReal_add hK0 (mul_nonneg hK1 (Real.sqrt_nonneg _))]
         congr 1
         simp only [K0, K1]
         field_simp
@@ -219,11 +216,9 @@ lemma rowLaw_cone_le {n : ℕ} (hn : 1 ≤ n) (x : Cube n) {c β : ℝ} (hc : 0 
   have hsn : 0 < Real.sqrt ((k + 1 : ℕ) : ℝ) := Real.sqrt_pos.2 (by positivity)
   set e : Vec (k + 1) := (Real.sqrt ((k + 1 : ℕ) : ℝ))⁻¹ • pt x
   have he : ‖e‖ = 1 := by
-    have h := InitAux.norm_pt_sq x
-    have hpt : ‖pt x‖ = Real.sqrt ((k + 1 : ℕ) : ℝ) := by
-      rw [← h, Real.sqrt_sq (norm_nonneg _)]
-    rw [norm_smul, hpt, Real.norm_eq_abs, abs_inv, abs_of_pos hsn, inv_mul_cancel₀ hsn.ne']
-  have hS : MeasurableSet {w : Vec (k + 1) | |⟪w, pt x⟫| ≤ c + β * (Real.sqrt ((k + 1 : ℕ) : ℝ) * ‖w‖)} :=
+    rw [norm_smul, norm_pt, Real.norm_eq_abs, abs_inv, abs_of_pos hsn, inv_mul_cancel₀ hsn.ne']
+  have hS : MeasurableSet
+      {w : Vec (k + 1) | |⟪w, pt x⟫| ≤ c + β * (Real.sqrt ((k + 1 : ℕ) : ℝ) * ‖w‖)} :=
     measurableSet_le (by fun_prop) (by fun_prop)
   rw [rowLaw, Measure.map_apply (by fun_prop) hS]
   have hpre : (fun v : Vec (k + 1) => (Real.sqrt ((k + 1 : ℕ) : ℝ))⁻¹ • v) ⁻¹'
@@ -287,7 +282,8 @@ end GateMassAux
 
 open GateMassAux
 
-/-- Fixed-gate regime (`thm:gate`), Gaussian estimate: `E_{W₀,a₀} D(𝔅) ≤ B_{n,m}(τ)` for every fixed marginal. -/
+/-- Fixed-gate regime (`thm:gate`), Gaussian estimate: `E_{W₀,a₀} D(𝔅) ≤ B_{n,m}(τ)` for every
+fixed marginal. -/
 theorem gateSet_mass {n m : ℕ} (hn : 1 ≤ n) {τ : ℝ} (hτ0 : 0 ≤ τ) (hτ : τ ≤ 1) (D : Dist n) :
     ∫⁻ W, ∫⁻ a, ENNReal.ofReal (∑ x, D.p x * (gateSet τ (W, a)).indicator 1 x)
         ∂(outLaw m) ∂(hiddenLaw n m) ≤ ENNReal.ofReal (gateBound n m τ) := by
@@ -426,7 +422,8 @@ theorem gateSet_mass {n m : ℕ} (hn : 1 ≤ n) {τ : ℝ} (hτ0 : 0 ≤ τ) (h�
   rw [ENNReal.ofReal_min, ENNReal.ofReal_one, ← hmP]
   exact le_min hle1 hleX
 
-/-- Fixed-gate regime (`thm:gate`), the simplified bound `B_{n,m}(τ) ≤ 2√(nm) τ + m√n τ²` for `0 ≤ τ ≤ 1`. -/
+/-- Fixed-gate regime (`thm:gate`), the simplified bound `B_{n,m}(τ) ≤ 2√(nm) τ + m√n τ²` for
+`0 ≤ τ ≤ 1`. -/
 theorem gateBound_le {n m : ℕ} (hn : 1 ≤ n) {τ : ℝ} (hτ0 : 0 ≤ τ) (hτ : τ ≤ 1) :
     gateBound n m τ ≤ 2 * Real.sqrt (n * m) * τ + m * Real.sqrt n * τ ^ 2 := by
   obtain ⟨hs, hc⟩ := sinh_cosh_le hτ0 hτ

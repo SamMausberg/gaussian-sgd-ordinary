@@ -23,8 +23,10 @@ at a zero preactivation, the normalized tail score and its sign with `sgn 0 = 1`
 `N(0, I_n/n)` of the hidden rows and `N(0, I_m/m)` of the output layer, and the risk. A marginal is a
 probability vector on the cube, so expectations over samples are finite sums. The risk is the
 Lebesgue integral (`lintegral`) over the initialization of the error averaged over histories drawn
-from `D^T`. The same file defines the comparison objects of the proofs (`psi`, `Good`, `frozen`,
-`mu`, `Rmap`, `Pmap`, `Zsym`) and the kernel correlation `kernelCorr`.
+from `D^T`; for an integrand not known to be measurable this is the lower integral, which makes
+the lower bounds and the premises at least as strong as for a measurable integrand. The same file defines the comparison objects of the proofs (`psi`, `Good`, `frozen`,
+`mu`, `Rmap`, `Pmap`, `Zsym`) and the kernel correlation `kernelCorr`. `Basic.lean` collects small
+lemmas used in several files.
 
 ## Map from the paper
 
@@ -42,7 +44,7 @@ from `D^T`. The same file defines the comparison objects of the proofs (`psi`, `
 | Kernel margin from success under every marginal (`thm:margin`) | `kernel_margin`, `lossTerm_le_half`, `regime_of_large`, `kernel_margin_regime` | `Main.lean` |
 | Parity obstruction (`cor:parity`) | `parity_lower_bound`, `kernelCorr_parity_sq_le` | `Main.lean`, `Kernel.lean` |
 | Row movement (`lem:rows`) | `row_movement` | `GateRegime.lean` |
-| Fixed gates at small total step (`thm:gate`) | `gates_fixed`, `exact_representation`, `gateSet_mass`, `gateBound_le`, `gate_pdc`, `gate_small_step` | `GateRegime.lean`, `GateMass.lean` |
+| Fixed gates at small total step (`thm:gate`) | `gates_fixed`, `exact_representation`, `gateSet_mass`, `gateBound_le`, `measurable_gate_inf`, `gate_pdc`, `gate_small_step` | `GateRegime.lean`, `GateMass.lean` |
 
 ## Not formalized
 

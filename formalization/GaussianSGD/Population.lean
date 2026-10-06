@@ -1,4 +1,4 @@
-import GaussianSGD.Defs
+import GaussianSGD.Basic
 
 /-!
 # Sampling and label effects (`lem:population`)
@@ -17,35 +17,17 @@ namespace GaussianSGD
 
 namespace Population
 
-theorem hasDerivAt_tanh (x : ℝ) : HasDerivAt Real.tanh (1 / Real.cosh x ^ 2) x := by
-  have h := (Real.hasDerivAt_sinh x).div (Real.hasDerivAt_cosh x) (Real.cosh_pos x).ne'
-  have he : Real.sinh / Real.cosh = Real.tanh := by
-    funext y; rw [Pi.div_apply, Real.tanh_eq_sinh_div_cosh]
-  rw [he] at h
-  convert h using 1
-  have := Real.cosh_sq_sub_sinh_sq x
-  have hc := (Real.cosh_pos x).ne'
-  field_simp
-  linarith
-
-theorem continuous_tanh : Continuous Real.tanh := by
-  have he : (fun y => Real.sinh y / Real.cosh y) = Real.tanh := by
-    funext y; rw [Real.tanh_eq_sinh_div_cosh]
-  rw [← he]
-  exact Real.continuous_sinh.div Real.continuous_cosh (fun y => (Real.cosh_pos y).ne')
-
 /-- A secant slope of `tanh` lies in `[0, 1]`. -/
 theorem tanh_secant (p q : ℝ) :
     ∃ κ : ℝ, 0 ≤ κ ∧ κ ≤ 1 ∧ Real.tanh p - Real.tanh q = κ * (p - q) := by
   have key : ∀ a b : ℝ, a < b →
       ∃ κ : ℝ, 0 ≤ κ ∧ κ ≤ 1 ∧ Real.tanh b - Real.tanh a = κ * (b - a) := by
     intro a b hab
-    obtain ⟨c, -, hc⟩ := exists_hasDerivAt_eq_slope Real.tanh (fun y => 1 / Real.cosh y ^ 2) hab
+    obtain ⟨c, -, hc⟩ := exists_hasDerivAt_eq_slope Real.tanh (fun y => (Real.cosh y ^ 2)⁻¹) hab
       continuous_tanh.continuousOn (fun y _ => hasDerivAt_tanh y)
-    refine ⟨1 / Real.cosh c ^ 2, by positivity, ?_, ?_⟩
+    refine ⟨(Real.cosh c ^ 2)⁻¹, by positivity, ?_, ?_⟩
     · have h1 := Real.one_le_cosh c
-      rw [div_le_one (by positivity)]
-      nlinarith
+      exact inv_le_one_of_one_le₀ (by nlinarith)
     · rw [hc]
       field_simp [(sub_pos.mpr hab).ne']
   rcases lt_trichotomy p q with hpq | hpq | hpq
@@ -256,14 +238,6 @@ theorem frozen_congr {n m : ℕ} (γ : ℝ) (ψ : Cube n → Vec m) (b0 : Vec m)
     rw [ih (fun k hk => hx k (by omega)) (fun k hk => hy k (by omega)), hx t (by omega),
       hy t (by omega)]
 
-theorem histWeight_nonneg {n T : ℕ} (D : Dist n) (s : Fin T → Cube n) : 0 ≤ histWeight D s :=
-  prod_nonneg fun i _ => D.nonneg (s i)
-
-theorem sum_histWeight {n T : ℕ} (D : Dist n) : ∑ s : Fin T → Cube n, histWeight D s = 1 := by
-  simp only [histWeight]
-  rw [← Fintype.prod_sum (fun (_ : Fin T) x => D.p x)]
-  simp [D.sum_one]
-
 /-- Integrating out one coordinate of a history drawn from `D^T`. -/
 theorem sum_histWeight_update {n T : ℕ} (D : Dist n) (i : Fin T)
     (F : (Fin T → Cube n) → ℝ) :
@@ -369,8 +343,8 @@ theorem tailAvg_sub {m T : ℕ} (u v : ℕ → Vec m) :
 
 end Population
 
-/-- Sampling and label effects (`lem:population`), sampling part: `E ‖u_t - v_t‖² ≤ t γ² Λ` for every initial vector,
-where the expectation is over histories drawn from `D^T` and `t ≤ T`. -/
+/-- Sampling and label effects (`lem:population`), sampling part: `E ‖u_t - v_t‖² ≤ t γ² Λ` for
+every initial vector, where the expectation is over histories drawn from `D^T` and `t ≤ T`. -/
 theorem frozen_sq_error {n m T : ℕ} {γ : ℝ} (hγ0 : 0 ≤ γ) (hγ : γ ≤ 1 / 2)
     (ψ : Cube n → Vec m) (hψ : ∀ x, ‖ψ x‖ ^ 2 ≤ 9 / 16) (h : Cube n → Bool) (D : Dist n)
     (b0 : Vec m) (t : ℕ) (ht : t ≤ T) :
@@ -434,7 +408,8 @@ theorem label_effect {n m : ℕ} {γ : ℝ} (hγ0 : 0 ≤ γ) (hγ : γ ≤ 1 / 
       _ ≤ t * γ * ‖mu ψ h D‖ / 2 + γ / 2 * ‖mu ψ h D‖ := by linarith
       _ = ((t + 1 : ℕ) : ℝ) * γ * ‖mu ψ h D‖ / 2 := by push_cast; ring
 
-/-- Sampling and label effects (`lem:population`), tail sampling part: `E ‖ū - v̄‖² ≤ Λ B² / T` with `B = γ T`. -/
+/-- Sampling and label effects (`lem:population`), tail sampling part: `E ‖ū - v̄‖² ≤ Λ B² / T`
+with `B = γ T`. -/
 theorem tail_sq_error {n m T : ℕ} (hT : 1 ≤ T) {γ : ℝ} (hγ0 : 0 ≤ γ) (hγ : γ ≤ 1 / 2)
     (ψ : Cube n → Vec m) (hψ : ∀ x, ‖ψ x‖ ^ 2 ≤ 9 / 16) (h : Cube n → Bool) (D : Dist n)
     (b0 : Vec m) :
@@ -467,7 +442,8 @@ theorem tail_sq_error {n m T : ℕ} (hT : 1 ≤ T) {γ : ℝ} (hγ0 : 0 ≤ γ) 
         rw [sum_const, nsmul_eq_mul]
         field_simp
 
-/-- Sampling and label effects (`lem:population`), tail label part: `|⟪v̄ - z̄, ψ(x)⟫| ≤ 3 B ‖μ‖ / 8` with `B = γ T`. -/
+/-- Sampling and label effects (`lem:population`), tail label part:
+`|⟪v̄ - z̄, ψ(x)⟫| ≤ 3 B ‖μ‖ / 8` with `B = γ T`. -/
 theorem tail_label_effect {n m T : ℕ} (hT : 1 ≤ T) {γ : ℝ} (hγ0 : 0 ≤ γ) (hγ : γ ≤ 1 / 2)
     (ψ : Cube n → Vec m) (hψ : ∀ x, ‖ψ x‖ ^ 2 ≤ 9 / 16) (h : Cube n → Bool) (D : Dist n)
     (b0 : Vec m) (x : Cube n) :
