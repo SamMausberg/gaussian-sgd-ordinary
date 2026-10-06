@@ -12,3 +12,4 @@ import GaussianSGD.Main
 import GaussianSGD.GateDefs
 import GaussianSGD.GateMass
 import GaussianSGD.GateRegime
+import GaussianSGD.Edge

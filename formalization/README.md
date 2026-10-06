@@ -42,6 +42,7 @@ lemmas used in several files.
 | Numerical instance (`eq:risk-simple`) | `lossTerm_regime`, `risk_lower_bound_regime` | `Main.lean` |
 | Convex separation and ordinary dimension (`lem:geometry`) | `margin_and_vc`, `growth_bound` | `Geometry.lean` |
 | Kernel margin from success under every marginal (`thm:margin`) | `kernel_margin`, `lossTerm_le_half`, `regime_of_large`, `kernel_margin_regime` | `Main.lean` |
+| Adjacent points (`cor:edge`) | `edge_lower_bound`, `class_constant` | `Edge.lean` |
 | Parity obstruction (`cor:parity`) | `parity_lower_bound`, `kernelCorr_parity_sq_le` | `Main.lean`, `Kernel.lean` |
 | Row movement (`lem:rows`) | `row_movement` | `GateRegime.lean` |
 | Fixed gates at small total step (`thm:gate`) | `gates_fixed`, `exact_representation`, `gateSet_mass`, `gateBound_le`, `measurable_gate_inf`, `gate_pdc`, `gate_small_step` | `GateRegime.lean`, `GateMass.lean` |

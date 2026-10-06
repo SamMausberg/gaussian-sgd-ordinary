@@ -43,6 +43,9 @@ import GaussianSGD
 #print axioms GaussianSGD.lossTerm_le_half
 #print axioms GaussianSGD.regime_of_large
 #print axioms GaussianSGD.kernel_margin_regime
+-- Adjacent points (`cor:edge`)
+#print axioms GaussianSGD.edge_lower_bound
+#print axioms GaussianSGD.class_constant
 -- Parity obstruction (`cor:parity`)
 #print axioms GaussianSGD.parity_lower_bound
 -- Fixed gates at small total step (`thm:gate`, `lem:rows`)

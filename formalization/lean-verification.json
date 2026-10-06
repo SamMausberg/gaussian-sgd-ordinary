@@ -2,8 +2,8 @@
   "status": "passed",
   "forbidden_tokens": [],
   "build_returncode": 0,
-  "audited_theorems": 41,
-  "listed_theorems": 41,
+  "audited_theorems": 43,
+  "listed_theorems": 43,
   "axioms": {
     "GaussianSGD.init_hidden": [
       "Classical.choice",
@@ -161,6 +161,16 @@
       "propext"
     ],
     "GaussianSGD.kernel_margin_regime": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "GaussianSGD.edge_lower_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "GaussianSGD.class_constant": [
       "Classical.choice",
       "Quot.sound",
       "propext"
